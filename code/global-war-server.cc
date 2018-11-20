@@ -39,6 +39,7 @@ namespace {
 
         assert(packet.type == gw::PacketType::Ping);
 
+        std::cout << "Length: " << length << '\n';
         std::cout << "Ping: " << packet.ping.sequence << '\n';
       }
     }
