@@ -1,0 +1,49 @@
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
+
+#
+# global-war
+#
+
+add_executable(global-war
+  global-war.cc
+)
+
+target_include_directories(global-war
+  PRIVATE
+    ${Boost_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+target_link_libraries(global-war
+  gf::gf0
+  ${Boost_LIBRARIES}
+)
+
+install(
+  TARGETS global-war
+  RUNTIME DESTINATION games
+)
+
+#
+# global-war-server
+#
+
+add_executable(global-war-server
+  global-war-server.cc
+)
+
+target_include_directories(global-war-server
+  PRIVATE
+    ${Boost_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+target_link_libraries(global-war-server
+  gf::gf0
+  ${Boost_LIBRARIES}
+)
+
+install(
+  TARGETS global-war-server
+  RUNTIME DESTINATION games
+)
