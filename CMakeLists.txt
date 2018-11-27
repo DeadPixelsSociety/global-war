@@ -51,4 +51,4 @@ if(UNIX)
 endif()
 
 add_subdirectory(code)
-# add_subdirectory(data)
+add_subdirectory(data)

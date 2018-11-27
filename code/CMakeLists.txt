@@ -1,3 +1,4 @@
+set(GLOBAL_WAR_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/games/global-war")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
 #
@@ -6,6 +7,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 
 add_executable(global-war
   global-war.cc
+  bits/client/ClientMap.cc
 )
 
 target_include_directories(global-war

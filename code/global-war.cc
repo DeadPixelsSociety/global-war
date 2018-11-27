@@ -6,6 +6,7 @@
 #include <gf/EntityContainer.h>
 #include <gf/Event.h>
 #include <gf/RenderWindow.h>
+#include <gf/ResourceManager.h>
 #include <gf/ViewContainer.h>
 #include <gf/Views.h>
 #include <gf/Window.h>
@@ -18,6 +19,7 @@
 
 #include "bits/common/Packet.h"
 
+#include "config.h"
 
 using boost::asio::ip::tcp;
 
@@ -68,6 +70,9 @@ int main(int argc, char *argv[]) {
     window.setFramerateLimit(60);
 
     gf::RenderWindow renderer(window);
+
+    gf::ResourceManager resources;
+    resources.addSearchDir(GLOBAL_WAR_DATA_DIR);
 
     // views
 
