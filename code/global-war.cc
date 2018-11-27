@@ -18,6 +18,7 @@
 #include <boost/asio.hpp>
 
 #include "bits/common/Packet.h"
+#include "bits/client/ClientMap.h"
 
 #include "config.h"
 
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]) {
     ping(socket);
 
     static constexpr gf::Vector2u ScreenSize(1024, 576);
-    static constexpr gf::Vector2f ViewSize(100.0f, 100.0f); // dummy values
+    static constexpr gf::Vector2f ViewSize(1000.0f, 1000.0f); // dummy values
     static constexpr gf::Vector2f ViewCenter(0.0f, 0.0f); // dummy values
 
     // initialization
@@ -85,6 +86,8 @@ int main(int argc, char *argv[]) {
     views.addView(hudView);
 
     views.setInitialScreenSize(ScreenSize);
+
+    gf::ZoomingViewAdaptor adaptor(renderer, mainView);
 
     // actions
 
@@ -131,6 +134,8 @@ int main(int argc, char *argv[]) {
 
     gf::EntityContainer mainEntities;
     // add entities to mainEntities
+    gw::ClientMap map(resources.getAbsolutePath("map.txt"));
+    mainEntities.addEntity(map);
 
     gf::EntityContainer hudEntities;
     // add entities to hudEntities
@@ -149,6 +154,7 @@ int main(int argc, char *argv[]) {
       while (window.pollEvent(event)) {
         actions.processEvent(event);
         views.processEvent(event);
+        adaptor.processEvent(event);
       }
 
       if (closeWindowAction.isActive()) {
