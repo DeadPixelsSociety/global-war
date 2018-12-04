@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
     gw::ClientMap map(resources.getAbsolutePath("map.txt"));
     mainEntities.addEntity(map);
 
-    gw::ClientArmy army;
+    gw::ClientArmy army(resources);
     mainEntities.addEntity(army);
 
     gf::EntityContainer hudEntities;
