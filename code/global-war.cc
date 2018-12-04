@@ -18,6 +18,7 @@
 #include <boost/asio.hpp>
 
 #include "bits/common/Packet.h"
+#include "bits/client/ClientArmy.h"
 #include "bits/client/ClientMap.h"
 
 #include "config.h"
@@ -136,6 +137,9 @@ int main(int argc, char *argv[]) {
     // add entities to mainEntities
     gw::ClientMap map(resources.getAbsolutePath("map.txt"));
     mainEntities.addEntity(map);
+
+    gw::ClientArmy army;
+    mainEntities.addEntity(army);
 
     gf::EntityContainer hudEntities;
     // add entities to hudEntities
