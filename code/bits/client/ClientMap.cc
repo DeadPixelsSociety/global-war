@@ -9,6 +9,8 @@
 #include <gf/RenderTarget.h>
 #include <gf/VectorOps.h>
 
+#include "Hexagon.h"
+
 namespace gw {
 
   namespace {
@@ -16,12 +18,6 @@ namespace gw {
     static constexpr int Sea = 0;
     static constexpr int Land = 1;
 
-    static constexpr float Size = 64.0f;
-    static constexpr gf::Vector2f HexSize(Size * gf::Sqrt3, 2 * Size * 3 / 4);
-
-    constexpr gf::Vector2i posToHex(gf::Vector2i pos) {
-      return { pos.x * 2 + pos.y % 2, pos.y };
-    }
   }
 
   ClientMap::ClientMap(const gf::Path& path)
@@ -57,17 +53,7 @@ namespace gw {
 
 
     for (gf::Vector2i pos : m_map.getPositionRange()) {
-//       gf::Vector2i hex = posToHex(pos);
-
-      gf::Vector2f offset = HexSize / 2;
-
-      if (pos.y % 2 == 1) {
-        offset.x += HexSize.width / 2;
-      }
-
-      gf::Vector2f coords = pos * HexSize + offset;
-
-      gf::CircleShape hex(Size, 6);
+      gf::CircleShape hex(Hexagon::Size, 6);
 
       switch (m_map(pos)) {
         case Sea:
@@ -83,7 +69,7 @@ namespace gw {
 
       hex.setOutlineColor(gf::Color::Black);
       hex.setOutlineThickness(3.0f);
-      hex.setPosition(coords);
+      hex.setPosition(Hexagon::positionToCoordinates(pos));
       hex.setAnchor(gf::Anchor::Center);
 
       target.draw(hex, states);

@@ -9,8 +9,8 @@ namespace gw {
 
   class ClientMap : public gf::Entity {
   public:
-    static constexpr int Width = 34;
-    static constexpr int Height = 9;
+    static constexpr int Width = 32;
+    static constexpr int Height = 32;
 
     ClientMap(const gf::Path& path);
 

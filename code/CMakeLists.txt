@@ -8,6 +8,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 add_executable(global-war
   global-war.cc
   bits/client/ClientMap.cc
+  bits/client/Hexagon.cc
 )
 
 target_include_directories(global-war
