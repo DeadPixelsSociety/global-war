@@ -14,6 +14,8 @@ namespace gw {
 
     ClientMap(const gf::Path& path);
 
+    gf::Vector2i getPosition(gf::Vector2f coords) const;
+
     virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
 
   private:

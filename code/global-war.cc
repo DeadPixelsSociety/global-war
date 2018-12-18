@@ -18,6 +18,7 @@
 #include <boost/asio.hpp>
 
 #include "bits/common/Packet.h"
+#include "bits/client/ArmySelection.h"
 #include "bits/client/ClientArmy.h"
 #include "bits/client/ClientMap.h"
 
@@ -144,6 +145,10 @@ int main(int argc, char *argv[]) {
     gf::EntityContainer hudEntities;
     // add entities to hudEntities
 
+
+    // state machines;
+    gw::ArmySelection armySelection(map, army, renderer, mainView);
+
     // game loop
 
     renderer.clear(gf::Color::White);
@@ -159,6 +164,7 @@ int main(int argc, char *argv[]) {
         actions.processEvent(event);
         views.processEvent(event);
         adaptor.processEvent(event);
+        armySelection.processEvent(event);
       }
 
       if (closeWindowAction.isActive()) {

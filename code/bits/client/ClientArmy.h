@@ -14,15 +14,17 @@ namespace gw {
   public:
     ClientArmy(gf::ResourceManager& resources);
 
-    virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
+    bool hasRegiment(gf::Vector2i position) const;
 
-  private:
-    gf::Font& m_font;
+    virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
 
     struct Regiment {
       int count;
       gf::Vector2i position;
     };
+
+  private:
+    gf::Font& m_font;
 
     std::vector<Regiment> m_army;
   };

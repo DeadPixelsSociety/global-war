@@ -11,6 +11,8 @@ namespace gw {
     static constexpr gf::Vector2f Step(Size * gf::Sqrt3, 2 * Size * 3 / 4);
 
     gf::Vector2f positionToCoordinates(gf::Vector2i position);
+    gf::Vector2i coordinatesToPosition(gf::Vector2f coords);
+
   }
 
 }

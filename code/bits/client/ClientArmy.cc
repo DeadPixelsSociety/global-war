@@ -15,6 +15,10 @@ namespace gw {
     m_army.push_back({ 40, { 16, 16 } });
   }
 
+  bool ClientArmy::hasRegiment(gf::Vector2i position) const {
+    return true;
+  }
+
   void ClientArmy::render(gf::RenderTarget& target, const gf::RenderStates& states) {
     for (auto& regiment : m_army) {
       auto position = Hexagon::positionToCoordinates(regiment.position);
