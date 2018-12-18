@@ -50,7 +50,7 @@ namespace gw {
   }
 
   gf::Vector2i ClientMap::getPosition(gf::Vector2f coords) const {
-    return gf::clamp(Hexagon::coordinatesToPosition(coords), { 0, 0 }, { Width - 1, Height - 1 });
+    return Hexagon::coordinatesToPosition(coords);
   }
 
   void ClientMap::render(gf::RenderTarget& target, const gf::RenderStates& states) {

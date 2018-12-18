@@ -6,6 +6,14 @@
 
 namespace gw {
 
+  namespace {
+
+    bool isPositionValid(gf::Vector2i position) {
+      return 0 <= position.x && position.x < ClientMap::Width && 0 <= position.y && position.y < ClientMap::Height;
+    }
+
+  }
+
   ArmySelection::ArmySelection(ClientMap& map, ClientArmy& army, const gf::RenderTarget& target, const gf::View& view)
   : m_map(&map)
   , m_army(&army)
@@ -21,7 +29,7 @@ namespace gw {
         case State::None: {
           gf::Vector2i position = m_map->getPosition(m_target->mapPixelToCoords(event.mouseButton.coords, *m_view));
 
-          if (m_army->hasRegiment(position)) {
+          if (isPositionValid(position) && m_army->hasRegiment(position)) {
             gf::Log::info("regiment: %i x %i\n", position.x, position.y);
           }
 
