@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "bits/server/ConnectionHandler.h"
+#include "bits/server/Lobby.h"
 
 using boost::asio::ip::tcp;
 
@@ -10,10 +10,10 @@ int main(int argc, char *argv[]) {
       std::cerr << "Usage: global-war-server <port>\n";
       return 1;
     }
-    gw::ConnectionHandler server(std::atoi(argv[1]));
+    gw::Lobby lobby(std::atoi(argv[1]));
 
     for (;;) {
-      server.processPacket();
+      lobby.processPacket();
     }
 
   } catch (std::exception& e) {

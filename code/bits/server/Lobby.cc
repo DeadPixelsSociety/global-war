@@ -1,17 +1,17 @@
-#include "ConnectionHandler.h"
+#include "Lobby.h"
 
 #include <iostream>
 
 using boost::asio::ip::tcp;
 
 namespace gw {
-  ConnectionHandler::ConnectionHandler(std::uint16_t port)
+  Lobby::Lobby(std::uint16_t port)
   : m_port(port){
     // Thread to automaticaly accept all clients
-    std::thread(&ConnectionHandler::waitNewPlayers, this).detach();
+    std::thread(&Lobby::waitNewPlayers, this).detach();
   }
 
-  void ConnectionHandler::waitNewPlayers() {
+  void Lobby::waitNewPlayers() {
     boost::asio::io_service ioService;
     tcp::acceptor a(ioService, tcp::endpoint(tcp::v4(), m_port));
 
@@ -27,7 +27,7 @@ namespace gw {
     }
   }
 
-  void ConnectionHandler::processPacket() {
+  void Lobby::processPacket() {
     Packet packet;
     m_comQueue.waitPoll(packet);
 

@@ -1,5 +1,5 @@
-#ifndef BITS_SERVER_CONNECTION_HANDLER
-#define BITS_SERVER_CONNECTION_HANDLER
+#ifndef BITS_SERVER_LOBBY
+#define BITS_SERVER_LOBBY
 
 #include <vector>
 #include <mutex>
@@ -12,9 +12,9 @@
 #include "PlayerCom.h"
 
 namespace gw {
-  class ConnectionHandler {
+  class Lobby {
   public:
-    ConnectionHandler(std::uint16_t port);
+    Lobby(std::uint16_t port);
 
     void waitNewPlayers();
     void processPacket();
@@ -29,4 +29,4 @@ namespace gw {
   };
 }
 
-#endif // BITS_SERVER_CONNECTION_HANDLER
+#endif // BITS_SERVER_LOBBY
