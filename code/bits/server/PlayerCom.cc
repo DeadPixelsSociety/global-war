@@ -7,14 +7,13 @@
 #include <gf/Serialization.h>
 #include <gf/SerializationOps.h>
 
-#include "../common/Packet.h"
-
 using boost::asio::ip::tcp;
 
 namespace gw {
 
-  PlayerCom::PlayerCom(tcp::socket sock)
-  : m_sock(std::move(sock)) {
+  PlayerCom::PlayerCom(tcp::socket sock, Queue &queue)
+  : m_sock(std::move(sock))
+  , m_queue(&queue) {
     std::thread(&PlayerCom::receivePackets, this).detach();
   }
 

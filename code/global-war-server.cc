@@ -10,9 +10,11 @@ int main(int argc, char *argv[]) {
       std::cerr << "Usage: global-war-server <port>\n";
       return 1;
     }
-
     gw::ConnectionHandler server(std::atoi(argv[1]));
-    server.waitNewPlayers();
+
+    for (;;) {
+      server.processPacket();
+    }
 
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << '\n';

@@ -2,12 +2,12 @@
 #define BITS_SERVER_CONNECTION_HANDLER
 
 #include <vector>
+#include <mutex>
 
 #include <boost/asio.hpp>
 
-#include <gf/Queue.h>
-
 #include "../common/Packet.h"
+#include "../common/Queue.h"
 
 #include "PlayerCom.h"
 
@@ -17,11 +17,14 @@ namespace gw {
     ConnectionHandler(std::uint16_t port);
 
     void waitNewPlayers();
+    void processPacket();
 
   private:
     std::uint16_t m_port;
-    boost::asio::io_service m_ioService;
-    gf::Queue<Packet> m_comQueue;
+
+    Queue m_comQueue;
+
+    std::mutex m_playerMutex;
     std::vector<PlayerCom> m_players;
   };
 }
