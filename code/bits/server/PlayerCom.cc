@@ -31,7 +31,6 @@ namespace gw {
       if (error == boost::asio::error::eof) {
         break; // Connection closed cleanly by peer.
       } else if (error) {
-        std::cout << "Thread error" << std::endl;
         throw boost::system::system_error(error); // Some other error.
       }
 
