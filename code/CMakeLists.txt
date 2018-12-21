@@ -35,6 +35,8 @@ install(
 
 add_executable(global-war-server
   global-war-server.cc
+  bits/server/ConnectionHandler.cc
+  bits/server/PlayerCom.cc
 )
 
 target_include_directories(global-war-server
