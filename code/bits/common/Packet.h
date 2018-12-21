@@ -7,10 +7,16 @@ namespace gw {
 
   enum class PacketType : uint16_t {
     Ping,
+    QuickMatch,
   };
 
   struct PacketPing {
     uint16_t sequence;
+  };
+
+  static constexpr int64_t InvalidPlayerID = -1;
+  struct QuickMatch {
+    int64_t playerID;
   };
 
 
@@ -19,6 +25,7 @@ namespace gw {
 
     union {
       PacketPing ping;
+      QuickMatch quickMatch;
     };
   };
 
@@ -30,6 +37,10 @@ namespace gw {
     switch (packet.type) {
       case PacketType::Ping:
         ar | packet.ping.sequence;
+        break;
+
+      case PacketType::QuickMatch:
+        ar | packet.quickMatch.playerID;
         break;
     }
 

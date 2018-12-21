@@ -35,6 +35,10 @@ namespace gw {
     case PacketType::Ping:
       std::cout << "Ping: " << packet.ping.sequence << '\n';
       break;
+
+    case PacketType::QuickMatch:
+      std::cout << "Player ID: " << packet.quickMatch.playerID << '\n';
+      break;
     }
   }
 }

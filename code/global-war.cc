@@ -45,6 +45,21 @@ namespace {
     boost::asio::write(socket, boost::asio::buffer(data, MaxLength));
   }
 
+  void quickMacth(tcp::socket& socket) {
+    gw::Packet packet;
+    packet.type = gw::PacketType::QuickMatch;
+    packet.quickMatch.playerID = gw::InvalidPlayerID;
+
+    uint8_t data[MaxLength];
+
+    gf::MemoryOutputStream stream(data);
+    gf::Serializer ar(stream);
+
+    ar | packet;
+
+    boost::asio::write(socket, boost::asio::buffer(data, MaxLength));
+  }
+
 }
 
 int main(int argc, char *argv[]) {
@@ -60,7 +75,7 @@ int main(int argc, char *argv[]) {
     tcp::resolver resolver(io_service);
     boost::asio::connect(socket, resolver.resolve({ argv[1], argv[2] }));
 
-    ping(socket);
+    quickMacth(socket);
 
     static constexpr gf::Vector2u ScreenSize(1024, 576);
     static constexpr gf::Vector2f ViewSize(1000.0f, 1000.0f); // dummy values
