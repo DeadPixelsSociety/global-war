@@ -13,6 +13,8 @@ namespace gw {
     gf::Vector2f positionToCoordinates(gf::Vector2i position);
     gf::Vector2i coordinatesToPosition(gf::Vector2f coords);
 
+    bool areNeighbors(gf::Vector2i lhs, gf::Vector2i rhs);
+
   }
 
 }

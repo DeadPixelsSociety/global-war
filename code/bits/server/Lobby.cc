@@ -1,6 +1,7 @@
 #include "Lobby.h"
 
 #include <iostream>
+#include <thread>
 
 using boost::asio::ip::tcp;
 

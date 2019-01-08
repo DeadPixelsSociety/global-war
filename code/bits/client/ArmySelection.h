@@ -18,21 +18,19 @@ namespace gw {
 
   private:
     enum class State {
-      None,
-      SelectCount,
-      SelectDestionation,
-      Selected,
+      WaitingRegiment,
+      WaitingDestination,
+      Done,
     };
 
-    State m_state = State::None;
+    State m_state = State::WaitingRegiment;
 
     const ClientMap *m_map;
     const ClientArmy *m_army;
     const gf::RenderTarget *m_target;
     const gf::View *m_view;
 
-    ClientArmy::Regiment *m_regiment = nullptr;
-    int m_percent;
+    gf::Vector2i m_source;
     gf::Vector2i m_destination;
 
   };

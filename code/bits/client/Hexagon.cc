@@ -10,6 +10,16 @@ namespace gw {
 //       return { pos.x * 2 + pos.y % 2, pos.y };
 //     }
 
+  namespace {
+
+    constexpr gf::Vector2i Neighbors[2][6] = {
+      { { -1, 0 }, { 1, 0 }, { -1, -1 }, { 0, -1 }, { -1, 1 },            { 0, 1 }           },
+      { { -1, 0 }, { 1, 0 },             { 0, -1 },            { 1, -1 }, { 0, 1 }, { 1, 1}  }
+    };
+
+  }
+
+
   namespace Hexagon {
 
     gf::Vector2f positionToCoordinates(gf::Vector2i position) {
@@ -29,23 +39,21 @@ namespace gw {
 
       candidates.push_back(position);
 
-      if (position.y % 2 == 0) {
-        candidates.push_back({ position.x - 1, position.y     });
-        candidates.push_back({ position.x + 1, position.y     });
-        candidates.push_back({ position.x - 1, position.y - 1 });
-        candidates.push_back({ position.x    , position.y - 1 });
-        candidates.push_back({ position.x - 1, position.y + 1 });
-        candidates.push_back({ position.x    , position.y + 1 });
-      } else {
-        candidates.push_back({ position.x - 1, position.y     });
-        candidates.push_back({ position.x + 1, position.y     });
-        candidates.push_back({ position.x    , position.y - 1 });
-        candidates.push_back({ position.x + 1, position.y - 1 });
-        candidates.push_back({ position.x    , position.y + 1 });
-        candidates.push_back({ position.x + 1, position.y + 1 });
+      for (auto pos : Neighbors[position.y % 2]) {
+        candidates.push_back(position + pos);
       }
 
       return *std::min_element(candidates.begin(), candidates.end(), [coords](gf::Vector2i lhs, gf::Vector2i rhs) { return gf::squareDistance(coords, positionToCoordinates(lhs)) < gf::squareDistance(coords, positionToCoordinates(rhs)); });
+    }
+
+    bool areNeighbors(gf::Vector2i lhs, gf::Vector2i rhs) {
+      for (auto pos : Neighbors[lhs.y % 2]) {
+        if (lhs + pos == rhs) {
+          return true;
+        }
+      }
+
+      return false;
     }
 
   }

@@ -12,11 +12,17 @@ namespace gw {
   ClientArmy::ClientArmy(gf::ResourceManager& resources)
   : m_font(resources.getFont("DejaVuSans.ttf"))
   {
-    m_army.push_back({ 40, { 16, 16 } });
+    m_army.insert({ 40, { 16, 16 } });
   }
 
-  bool ClientArmy::hasRegiment(gf::Vector2i position) const {
-    return true;
+  const Regiment* ClientArmy::getRegiment(gf::Vector2i position) const {
+    auto it = m_army.find(position);
+
+    if (it == m_army.end()) {
+      return nullptr;
+    }
+
+    return std::addressof(*it);
   }
 
   void ClientArmy::render(gf::RenderTarget& target, const gf::RenderStates& states) {

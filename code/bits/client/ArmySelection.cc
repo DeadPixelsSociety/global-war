@@ -4,6 +4,8 @@
 
 #include <gf/Log.h>
 
+#include "Hexagon.h"
+
 namespace gw {
 
   namespace {
@@ -26,18 +28,37 @@ namespace gw {
   void ArmySelection::processEvent(const gf::Event& event) {
     if (event.type == gf::EventType::MouseButtonPressed) {
       switch (m_state) {
-        case State::None: {
+        case State::WaitingRegiment: {
           gf::Vector2i position = m_map->getPosition(m_target->mapPixelToCoords(event.mouseButton.coords, *m_view));
 
-          if (isPositionValid(position) && m_army->hasRegiment(position)) {
-            gf::Log::info("regiment: %i x %i\n", position.x, position.y);
+          if (isPositionValid(position)) {
+            auto regiment = m_army->getRegiment(position);
+
+            if (regiment != nullptr) {
+              m_source = position;
+              gf::Log::info("source: %i x %i\n", position.x, position.y);
+              m_state = State::WaitingDestination;
+            }
           }
 
           break;
         }
 
-        default:
-          assert(false);
+        case State::WaitingDestination: {
+          gf::Vector2i position = m_map->getPosition(m_target->mapPixelToCoords(event.mouseButton.coords, *m_view));
+          gf::Log::info("possible destination: %i x %i\n", position.x, position.y);
+
+          if (isPositionValid(position) && Hexagon::areNeighbors(m_source, position)) {
+            m_destination = position;
+            gf::Log::info("destination: %i x %i\n", position.x, position.y);
+            m_state = State::Done;
+          }
+
+          break;
+        }
+
+        case State::Done:
+          break;
       }
     }
   }
