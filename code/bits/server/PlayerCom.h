@@ -3,20 +3,21 @@
 
 #include <boost/asio.hpp>
 
+#include <gf/Queue.h>
+
 #include "../common/Packet.h"
-#include "../common/Queue.h"
 
 namespace gw {
   class PlayerCom {
   public:
-    PlayerCom(boost::asio::ip::tcp::socket sock, Queue &queue);
+    PlayerCom(boost::asio::ip::tcp::socket sock, gf::Queue<Packet> &queue);
 
   private:
     void receivePackets();
 
   private:
     boost::asio::ip::tcp::socket m_sock;
-    Queue* m_queue;
+    gf::Queue<Packet>* m_queue;
   };
 }
 

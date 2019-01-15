@@ -30,7 +30,7 @@ namespace gw {
 
   void Lobby::processPacket() {
     Packet packet;
-    m_comQueue.waitPoll(packet);
+    m_comQueue.wait(packet);
 
     switch (packet.type) {
     case PacketType::Ping:

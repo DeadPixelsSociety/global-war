@@ -6,8 +6,9 @@
 
 #include <boost/asio.hpp>
 
+#include <gf/Queue.h>
+
 #include "../common/Packet.h"
-#include "../common/Queue.h"
 
 #include "PlayerCom.h"
 
@@ -22,7 +23,7 @@ namespace gw {
   private:
     std::uint16_t m_port;
 
-    Queue m_comQueue;
+    gf::Queue<Packet> m_comQueue;
 
     std::mutex m_playerMutex;
     std::vector<PlayerCom> m_players;
