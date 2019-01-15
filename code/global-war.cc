@@ -79,6 +79,8 @@ namespace {
     gw::Packet packet;
     ar | packet;
 
+    assert(packet.type == gw::PacketType::NewPlayer);
+
     return packet;
   }
 
