@@ -11,9 +11,10 @@ using boost::asio::ip::tcp;
 
 namespace gw {
 
-  PlayerCom::PlayerCom(tcp::socket sock, gf::Queue<Packet> &queue)
+  PlayerCom::PlayerCom(tcp::socket sock, gf::Queue<Packet> &queue, gf::Id playerId)
   : m_sock(std::move(sock))
-  , m_queue(&queue) {
+  , m_queue(&queue)
+  , m_playerId(playerId) {
     std::thread(&PlayerCom::receivePackets, this).detach();
   }
 
@@ -41,6 +42,19 @@ namespace gw {
 
       m_queue->push(packet);
     }
+  }
+
+  // Thread safe ? I don't think @ahugeat
+  void PlayerCom::sendPacket(Packet &packet) {
+    constexpr int MaxLength = 1024;
+    uint8_t data[MaxLength];
+
+    gf::MemoryOutputStream stream(data);
+    gf::Serializer ar(stream);
+
+    ar | packet;
+
+    boost::asio::write(m_sock, boost::asio::buffer(data, MaxLength));
   }
 
 }

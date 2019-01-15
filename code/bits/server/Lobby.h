@@ -6,7 +6,9 @@
 
 #include <boost/asio.hpp>
 
+#include <gf/Id.h>
 #include <gf/Queue.h>
+#include <gf/Random.h>
 
 #include "../common/Packet.h"
 
@@ -15,12 +17,16 @@
 namespace gw {
   class Lobby {
   public:
-    Lobby(std::uint16_t port);
+    Lobby(gf::Random &random, std::uint16_t port);
 
     void waitNewPlayers();
     void processPacket();
 
   private:
+    gf::Id generateId() const;
+
+  private:
+    gf::Random& m_random;
     std::uint16_t m_port;
 
     gf::Queue<Packet> m_comQueue;

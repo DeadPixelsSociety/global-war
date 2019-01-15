@@ -3,10 +3,13 @@
 
 #include <cstdint>
 
+#include <gf/Id.h>
+
 namespace gw {
 
   enum class PacketType : uint16_t {
     Ping,
+    NewPlayer,
     QuickMatch,
   };
 
@@ -14,9 +17,13 @@ namespace gw {
     uint16_t sequence;
   };
 
-  static constexpr int64_t InvalidPlayerID = -1;
+  static constexpr gf::Id InvalidPlayerID = gf::InvalidId;
+  struct NewPlayer {
+    gf::Id playerID;
+  };
+
   struct QuickMatch {
-    int64_t playerID;
+    gf::Id playerID;
   };
 
 
@@ -25,6 +32,7 @@ namespace gw {
 
     union {
       PacketPing ping;
+      NewPlayer newPlayer;
       QuickMatch quickMatch;
     };
   };
@@ -37,6 +45,10 @@ namespace gw {
     switch (packet.type) {
       case PacketType::Ping:
         ar | packet.ping.sequence;
+        break;
+
+      case PacketType::NewPlayer:
+        ar | packet.newPlayer.playerID;
         break;
 
       case PacketType::QuickMatch:

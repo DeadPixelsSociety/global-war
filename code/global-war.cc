@@ -30,6 +30,8 @@ namespace {
 
   constexpr int MaxLength = 1024;
 
+  gf::Id playerID = gw::InvalidPlayerID;
+
   void ping(tcp::socket& socket) {
     gw::Packet packet;
     packet.type = gw::PacketType::Ping;
@@ -48,7 +50,7 @@ namespace {
   void quickMacth(tcp::socket& socket) {
     gw::Packet packet;
     packet.type = gw::PacketType::QuickMatch;
-    packet.quickMatch.playerID = gw::InvalidPlayerID;
+    packet.quickMatch.playerID = playerID;
 
     uint8_t data[MaxLength];
 
@@ -58,6 +60,26 @@ namespace {
     ar | packet;
 
     boost::asio::write(socket, boost::asio::buffer(data, MaxLength));
+  }
+
+  gw::Packet newPlayer(tcp::socket &socket) {
+    uint8_t data[MaxLength];
+
+    boost::system::error_code error;
+
+    size_t length = socket.read_some(boost::asio::buffer(data), error);
+
+    if (error) {
+      throw boost::system::system_error(error); // Some other error.
+    }
+
+    gf::MemoryInputStream stream(gf::ArrayRef<uint8_t>(data, length));
+    gf::Deserializer ar(stream);
+
+    gw::Packet packet;
+    ar | packet;
+
+    return packet;
   }
 
 }
@@ -74,6 +96,11 @@ int main(int argc, char *argv[]) {
     tcp::socket socket(io_service);
     tcp::resolver resolver(io_service);
     boost::asio::connect(socket, resolver.resolve({ argv[1], argv[2] }));
+
+    // Receive ID
+    auto packet = newPlayer(socket);
+    ::playerID = packet.newPlayer.playerID;
+    gf::Log::info("Player ID: %lx\n", ::playerID);
 
     quickMacth(socket);
 
