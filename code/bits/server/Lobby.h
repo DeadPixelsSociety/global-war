@@ -11,6 +11,7 @@
 #include <gf/Random.h>
 
 #include "../common/Packet.h"
+#include "../common/Sockets.h"
 
 #include "PlayerCom.h"
 
@@ -19,7 +20,7 @@ namespace gw {
   public:
     Lobby(gf::Random &random, std::uint16_t port);
 
-    void waitNewPlayers();
+    void addNewPlayer(SocketTcp socket);
     void processPacket();
 
   private:
@@ -27,7 +28,7 @@ namespace gw {
 
   private:
     gf::Random& m_random;
-    std::uint16_t m_port;
+    ListenerTcp m_listener;
 
     gf::Queue<Packet> m_comQueue;
 

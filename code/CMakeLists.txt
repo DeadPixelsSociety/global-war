@@ -11,6 +11,8 @@ add_executable(global-war
   bits/client/ClientArmy.cc
   bits/client/ClientMap.cc
   bits/client/Hexagon.cc
+
+  bits/common/Sockets.cc
 )
 
 target_include_directories(global-war
@@ -37,6 +39,8 @@ add_executable(global-war-server
   global-war-server.cc
   bits/server/Lobby.cc
   bits/server/PlayerCom.cc
+
+  bits/common/Sockets.cc
 )
 
 target_include_directories(global-war-server

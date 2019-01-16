@@ -1,17 +1,16 @@
 #ifndef BITS_SERVER_PLAYER_COM
 #define BITS_SERVER_PLAYER_COM
 
-#include <boost/asio.hpp>
-
 #include <gf/Id.h>
 #include <gf/Queue.h>
 
 #include "../common/Packet.h"
+#include "../common/Sockets.h"
 
 namespace gw {
   class PlayerCom {
   public:
-    PlayerCom(boost::asio::ip::tcp::socket sock, gf::Queue<Packet> &queue, gf::Id playerId);
+    PlayerCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId);
 
     void start();
     void sendPacket(Packet &packet);
@@ -20,7 +19,7 @@ namespace gw {
     void receivePackets();
 
   private:
-    boost::asio::ip::tcp::socket m_sock;
+    SocketTcp m_socket;
     gf::Queue<Packet>* m_queue;
     gf::Id m_playerId;
   };

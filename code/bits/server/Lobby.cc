@@ -11,36 +11,29 @@ using namespace gf::literals;
 namespace gw {
   Lobby::Lobby(gf::Random &random, std::uint16_t port)
   : m_random(random)
-  , m_port(port){
-    // Thread to automaticaly accept all clients
-    std::thread(&Lobby::waitNewPlayers, this).detach();
+  , m_listener(port) {
+    m_listener.handleNewConnection([this](SocketTcp clientSocket){
+      this->addNewPlayer(std::move(clientSocket));
+    });
   }
 
-  void Lobby::waitNewPlayers() {
-    boost::asio::io_service ioService;
-    tcp::acceptor a(ioService, tcp::endpoint(tcp::v4(), m_port));
+  void Lobby::addNewPlayer(SocketTcp socket) {
+    // Generate a new ID
+    gf::Id id = generateId();
+    std::map<gf::Id, PlayerCom>::iterator it;
 
-    for (;;) {
-      tcp::socket sock(ioService);
-      a.accept(sock);
-
-      // Generate a new ID
-      gf::Id id = generateId();
-      std::map<gf::Id, PlayerCom>::iterator it;
-
-      // Create a new player
-      {
-        std::lock_guard<std::mutex> mutexLock(m_playerMutex);
-        std::tie(it, std::ignore) = m_players.emplace(id, PlayerCom(std::move(sock), m_comQueue, id));
-      }
-      it->second.start();
-
-      // Send to the client his ID
-      Packet packet;
-      packet.type = PacketType::NewPlayer;
-      packet.newPlayer.playerID = id;
-      it->second.sendPacket(packet);
+    // Create a new player
+    {
+      std::lock_guard<std::mutex> mutexLock(m_playerMutex);
+      std::tie(it, std::ignore) = m_players.emplace(id, PlayerCom(std::move(socket), m_comQueue, id));
     }
+    it->second.start();
+
+    // Send to the client his ID
+    Packet packet;
+    packet.type = PacketType::NewPlayer;
+    packet.newPlayer.playerID = id;
+    it->second.sendPacket(packet);
   }
 
   void Lobby::processPacket() {
@@ -69,12 +62,6 @@ namespace gw {
     uint64_t max = std::numeric_limits<uint64_t>::max();
     uint64_t number = m_random.computeUniformInteger(min, max);
 
-    // Convert the uint64 to hex string
-    std::stringstream stream;
-    stream << std::hex << number;
-    std::string result(stream.str());
-
-    // Return the hash
-    return gf::hash(result);
+    return number;
   }
 }

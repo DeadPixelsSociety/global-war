@@ -15,16 +15,13 @@
 #include <gf/Serialization.h>
 #include <gf/SerializationOps.h>
 
-#include <boost/asio.hpp>
-
 #include "bits/common/Packet.h"
+#include "bits/common/Sockets.h"
 #include "bits/client/ArmySelection.h"
 #include "bits/client/ClientArmy.h"
 #include "bits/client/ClientMap.h"
 
 #include "config.h"
-
-using boost::asio::ip::tcp;
 
 namespace {
 
@@ -32,52 +29,25 @@ namespace {
 
   gf::Id playerID = gw::InvalidPlayerID;
 
-  void ping(tcp::socket& socket) {
+  void ping(gw::SocketTcp& socket) {
     gw::Packet packet;
     packet.type = gw::PacketType::Ping;
     packet.ping.sequence = 42;
 
-    uint8_t data[MaxLength];
-
-    gf::MemoryOutputStream stream(data);
-    gf::Serializer ar(stream);
-
-    ar | packet;
-
-    boost::asio::write(socket, boost::asio::buffer(data, MaxLength));
+    socket.send(packet);
   }
 
-  void quickMacth(tcp::socket& socket) {
+  void quickMacth(gw::SocketTcp& socket) {
     gw::Packet packet;
     packet.type = gw::PacketType::QuickMatch;
     packet.quickMatch.playerID = playerID;
 
-    uint8_t data[MaxLength];
-
-    gf::MemoryOutputStream stream(data);
-    gf::Serializer ar(stream);
-
-    ar | packet;
-
-    boost::asio::write(socket, boost::asio::buffer(data, MaxLength));
+    socket.send(packet);
   }
 
-  gw::Packet newPlayer(tcp::socket &socket) {
-    uint8_t data[MaxLength];
-
-    boost::system::error_code error;
-
-    size_t length = socket.read_some(boost::asio::buffer(data), error);
-
-    if (error) {
-      throw boost::system::system_error(error); // Some other error.
-    }
-
-    gf::MemoryInputStream stream(gf::ArrayRef<uint8_t>(data, length));
-    gf::Deserializer ar(stream);
-
+  gw::Packet newPlayer(gw::SocketTcp& socket) {
     gw::Packet packet;
-    ar | packet;
+    socket.receive(packet);
 
     assert(packet.type == gw::PacketType::NewPlayer);
 
@@ -93,11 +63,8 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    boost::asio::io_service io_service;
-
-    tcp::socket socket(io_service);
-    tcp::resolver resolver(io_service);
-    boost::asio::connect(socket, resolver.resolve({ argv[1], argv[2] }));
+    gw::SocketTcp socket;
+    socket.connectTo(argv[1], argv[2]);
 
     // Receive ID
     auto packet = newPlayer(socket);
