@@ -13,6 +13,7 @@ namespace gw {
   public:
     PlayerCom(boost::asio::ip::tcp::socket sock, gf::Queue<Packet> &queue, gf::Id playerId);
 
+    void start();
     void sendPacket(Packet &packet);
 
   private:
@@ -21,7 +22,7 @@ namespace gw {
   private:
     boost::asio::ip::tcp::socket m_sock;
     gf::Queue<Packet>* m_queue;
-    const gf::Id m_playerId;
+    gf::Id m_playerId;
   };
 }
 

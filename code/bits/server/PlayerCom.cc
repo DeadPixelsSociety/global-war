@@ -15,6 +15,10 @@ namespace gw {
   : m_sock(std::move(sock))
   , m_queue(&queue)
   , m_playerId(playerId) {
+
+  }
+
+  void PlayerCom::start() {
     std::thread(&PlayerCom::receivePackets, this).detach();
   }
 

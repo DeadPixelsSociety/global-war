@@ -26,18 +26,20 @@ namespace gw {
 
       // Generate a new ID
       gf::Id id = generateId();
+      std::map<gf::Id, PlayerCom>::iterator it;
 
       // Create a new player
       {
         std::lock_guard<std::mutex> mutexLock(m_playerMutex);
-        m_players.emplace_back(std::move(sock), m_comQueue, id);
+        std::tie(it, std::ignore) = m_players.emplace(id, PlayerCom(std::move(sock), m_comQueue, id));
       }
+      it->second.start();
 
       // Send to the client his ID
       Packet packet;
       packet.type = PacketType::NewPlayer;
       packet.newPlayer.playerID = id;
-      m_players.back().sendPacket(packet);
+      it->second.sendPacket(packet);
     }
   }
 

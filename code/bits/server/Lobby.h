@@ -2,7 +2,7 @@
 #define BITS_SERVER_LOBBY
 
 #include <vector>
-#include <mutex>
+#include <map>
 
 #include <boost/asio.hpp>
 
@@ -32,7 +32,7 @@ namespace gw {
     gf::Queue<Packet> m_comQueue;
 
     std::mutex m_playerMutex;
-    std::vector<PlayerCom> m_players;
+    std::map<gf::Id, PlayerCom> m_players;
   };
 }
 
