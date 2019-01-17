@@ -8,6 +8,11 @@
 #include "Packet.h"
 
 namespace gw {
+  enum class SocketState {
+    Disconnected,
+    Connected,
+  };
+
   class SocketTcp {
   public:
     SocketTcp();
@@ -19,6 +24,8 @@ namespace gw {
     SocketTcp(SocketTcp&& other);
     SocketTcp& operator=(SocketTcp&& other);
 
+    SocketState getState() const;
+
     void connectTo(const char* server, const char* port);
 
     void send(Packet &packet);
@@ -27,6 +34,7 @@ namespace gw {
   private:
     boost::asio::io_service m_ioService;
     boost::asio::ip::tcp::socket m_socket;
+    SocketState m_state;
   };
 
   class ListenerTcp {

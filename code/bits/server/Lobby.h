@@ -4,8 +4,6 @@
 #include <vector>
 #include <map>
 
-#include <boost/asio.hpp>
-
 #include <gf/Id.h>
 #include <gf/Queue.h>
 #include <gf/Random.h>

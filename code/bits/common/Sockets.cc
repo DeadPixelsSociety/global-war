@@ -18,28 +18,37 @@ using boost::asio::ip::tcp;
 
 namespace gw {
   SocketTcp::SocketTcp()
-  : m_socket(m_ioService) {
+  : m_socket(m_ioService)
+  , m_state(SocketState::Disconnected) {
   }
 
   SocketTcp::SocketTcp(boost::asio::ip::tcp::socket socket)
-  : m_socket(std::move(socket)) {
+  : m_socket(std::move(socket))
+  , m_state(SocketState::Connected) {
 
   }
 
   SocketTcp::SocketTcp(SocketTcp&& other)
-  : m_socket(std::move(other.m_socket)) {
+  : m_socket(std::move(other.m_socket))
+  , m_state(other.m_state) {
 
   }
 
   SocketTcp& SocketTcp::operator=(SocketTcp&& other) {
     m_socket = std::move(other.m_socket);
+    m_state = other.m_state;
 
     return *this;
+  }
+
+  SocketState SocketTcp::getState() const {
+    return m_state;
   }
 
   void SocketTcp::connectTo(const char* server, const char* port) {
     tcp::resolver resolver(m_ioService);
     boost::asio::connect(m_socket, resolver.resolve({ server, port }));
+    m_state = SocketState::Connected;
   }
 
   void SocketTcp::send(Packet &packet) {
@@ -63,6 +72,7 @@ namespace gw {
     size_t length = m_socket.read_some(boost::asio::buffer(data), error);
 
     if (error == boost::asio::error::eof) {
+      m_state = SocketState::Disconnected;
       return; // Connection closed cleanly by peer.
     } else if (error) {
       throw boost::system::system_error(error); // Some other error.
