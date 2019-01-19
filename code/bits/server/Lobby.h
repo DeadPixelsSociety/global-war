@@ -11,7 +11,7 @@
 #include "../common/Packet.h"
 #include "../common/Sockets.h"
 
-#include "PlayerCom.h"
+#include "ThreadCom.h"
 
 namespace gw {
   class Lobby {
@@ -31,7 +31,7 @@ namespace gw {
     gf::Queue<Packet> m_comQueue;
 
     std::mutex m_playerMutex;
-    std::map<gf::Id, PlayerCom> m_players;
+    std::map<gf::Id, ThreadCom> m_players;
   };
 }
 

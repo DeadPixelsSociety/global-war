@@ -20,12 +20,12 @@ namespace gw {
   void Lobby::addNewPlayer(SocketTcp socket) {
     // Generate a new ID
     gf::Id id = generateId();
-    std::map<gf::Id, PlayerCom>::iterator it;
+    std::map<gf::Id, ThreadCom>::iterator it;
 
     // Create a new player
     {
       std::lock_guard<std::mutex> mutexLock(m_playerMutex);
-      std::tie(it, std::ignore) = m_players.emplace(id, PlayerCom(std::move(socket), m_comQueue, id));
+      std::tie(it, std::ignore) = m_players.emplace(id, ThreadCom(std::move(socket), m_comQueue, id));
     }
     it->second.start();
 

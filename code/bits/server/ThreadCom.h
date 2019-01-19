@@ -1,5 +1,5 @@
-#ifndef BITS_SERVER_PLAYER_COM
-#define BITS_SERVER_PLAYER_COM
+#ifndef BITS_SERVER_THREAD_COM_H
+#define BITS_SERVER_THREAD_COM_H
 
 #include <gf/Id.h>
 #include <gf/Queue.h>
@@ -8,9 +8,9 @@
 #include "../common/Sockets.h"
 
 namespace gw {
-  class PlayerCom {
+  class ThreadCom {
   public:
-    PlayerCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId);
+    ThreadCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId);
 
     void start();
     void sendPacket(Packet &packet);
@@ -25,4 +25,4 @@ namespace gw {
   };
 }
 
-#endif // BITS_SERVER_PLAYER_COM
+#endif // BITS_SERVER_THREAD_COM_H

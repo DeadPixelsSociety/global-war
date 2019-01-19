@@ -1,4 +1,4 @@
-#include "PlayerCom.h"
+#include "ThreadCom.h"
 
 #include <iostream>
 #include <thread>
@@ -9,18 +9,18 @@
 
 namespace gw {
 
-  PlayerCom::PlayerCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId)
+  ThreadCom::ThreadCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId)
   : m_socket(std::move(socket))
   , m_queue(&queue)
   , m_playerId(playerId) {
 
   }
 
-  void PlayerCom::start() {
-    std::thread(&PlayerCom::receivePackets, this).detach();
+  void ThreadCom::start() {
+    std::thread(&ThreadCom::receivePackets, this).detach();
   }
 
-  void PlayerCom::receivePackets() {
+  void ThreadCom::receivePackets() {
     for(;;) {
       Packet packet;
       m_socket.receive(packet);
@@ -33,7 +33,7 @@ namespace gw {
     }
   }
 
-  void PlayerCom::sendPacket(Packet &packet) {
+  void ThreadCom::sendPacket(Packet &packet) {
     m_socket.send(packet);
   }
 
