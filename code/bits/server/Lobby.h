@@ -11,7 +11,8 @@
 #include "../common/Packet.h"
 #include "../common/Sockets.h"
 
-#include "ThreadCom.h"
+#include "GameSession.h"
+#include "Player.h"
 
 namespace gw {
   class Lobby {
@@ -23,6 +24,7 @@ namespace gw {
 
   private:
     gf::Id generateId() const;
+    void createNewGame();
 
   private:
     gf::Random& m_random;
@@ -31,7 +33,9 @@ namespace gw {
     gf::Queue<Packet> m_comQueue;
 
     std::mutex m_playerMutex;
-    std::map<gf::Id, ThreadCom> m_players;
+    std::map<gf::Id, Player> m_players;
+
+    std::map<gf::Id, GameSession> m_games;
   };
 }
 

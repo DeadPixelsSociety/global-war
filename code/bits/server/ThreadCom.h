@@ -10,7 +10,9 @@
 namespace gw {
   class ThreadCom {
   public:
-    ThreadCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId);
+    ThreadCom(SocketTcp socket, gf::Queue<Packet> &queue);
+
+    void setQueue(gf::Queue<Packet>* queue);
 
     void start();
     void sendPacket(Packet &packet);
@@ -21,7 +23,6 @@ namespace gw {
   private:
     SocketTcp m_socket;
     gf::Queue<Packet>* m_queue;
-    gf::Id m_playerId;
   };
 }
 

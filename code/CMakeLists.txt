@@ -37,7 +37,9 @@ install(
 
 add_executable(global-war-server
   global-war-server.cc
+  bits/server/GameSession.cc
   bits/server/Lobby.cc
+  bits/server/Player.cc
   bits/server/ThreadCom.cc
 
   bits/common/Sockets.cc

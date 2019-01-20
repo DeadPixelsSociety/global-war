@@ -9,11 +9,14 @@
 
 namespace gw {
 
-  ThreadCom::ThreadCom(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId)
+  ThreadCom::ThreadCom(SocketTcp socket, gf::Queue<Packet> &queue)
   : m_socket(std::move(socket))
-  , m_queue(&queue)
-  , m_playerId(playerId) {
+  , m_queue(&queue) {
 
+  }
+
+  void ThreadCom::setQueue(gf::Queue<Packet>* queue) {
+    m_queue = queue;
   }
 
   void ThreadCom::start() {
