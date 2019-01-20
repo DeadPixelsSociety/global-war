@@ -10,6 +10,7 @@ add_executable(global-war
   bits/client/ArmySelection.cc
   bits/client/ClientArmy.cc
   bits/client/ClientMap.cc
+  bits/client/GameState.cc
   bits/client/Hexagon.cc
 
   bits/common/Sockets.cc
