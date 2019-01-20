@@ -16,6 +16,7 @@
 #include "ArmySelection.h"
 #include "ClientArmy.h"
 #include "ClientMap.h"
+#include "WaitScreen.h"
 
 namespace gw {
   class GameState: public gf::Entity {
@@ -29,7 +30,19 @@ namespace gw {
     void quickMacth();
     Packet newPlayer();
 
+    void lobbyLoop();
+    void gameLoop();
+
   private:
+    enum class State {
+      Lobby,
+      Game,
+    };
+
+  private:
+    // State
+    State m_state;
+
     // Screen
     gf::Window m_window;
     gf::RenderWindow m_renderer;
@@ -39,14 +52,18 @@ namespace gw {
     gf::Id m_playerID;
 
     // Views
+    gf::ExtendView m_mainView;
+
+    // for game
+    gf::ViewContainer m_lobbyViews;
+
     // for game
     gf::ViewContainer m_gameViews;
-    gf::ExtendView m_mainView;
     gf::ScreenView m_hudView;
     gf::ZoomingViewAdaptor m_adaptor;
 
     // Actions
-    // for game
+    gf::ActionContainer m_lobbyActions;
     gf::ActionContainer m_gameActions;
     gf::Action m_closeWindowAction;
     gf::Action m_fullscreenAction;
@@ -57,6 +74,10 @@ namespace gw {
     gf::Action m_pingAction;
 
     // Entities
+    // for lobby
+    gf::EntityContainer m_lobbyEntities;
+    WaitScreen m_waitScreen;
+
     // for game
     gf::EntityContainer m_gameEntities;
     ClientMap m_map;

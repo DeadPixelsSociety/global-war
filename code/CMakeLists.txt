@@ -12,6 +12,7 @@ add_executable(global-war
   bits/client/ClientMap.cc
   bits/client/GameState.cc
   bits/client/Hexagon.cc
+  bits/client/WaitScreen.cc
 
   bits/common/Sockets.cc
 )
