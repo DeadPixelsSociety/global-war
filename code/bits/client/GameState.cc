@@ -12,6 +12,8 @@ namespace gw {
   : m_state(State::Lobby)
   , m_window("Global War", ScreenSize)
   , m_renderer(m_window)
+  , m_playerID(InvalidPlayerID)
+  , m_threadCom(hostname, port, m_comQueue)
   , m_mainView(ViewCenter, ViewSize)
   , m_adaptor(m_renderer, m_mainView)
   , m_closeWindowAction("Close window")
@@ -29,13 +31,8 @@ namespace gw {
     m_window.setVerticalSyncEnabled(true);
     m_window.setFramerateLimit(60);
 
-    // Init network
-    m_socket.connectTo(hostname, port);
-
     // Receive ID
-    auto packet = newPlayer();
-    m_playerID = packet.newPlayer.playerID;
-    gf::Log::info("Player ID: %lx\n", m_playerID);
+    newPlayer();
 
     // Init views
     m_lobbyViews.addView(m_hudView);
@@ -86,14 +83,18 @@ namespace gw {
   }
 
   void GameState::loop() {
-    switch (m_state) {
-      case State::Lobby:
+    m_threadCom.start();
+
+    while (m_window.isOpen()) {
+      switch (m_state) {
+        case State::Lobby:
         lobbyLoop();
         break;
 
-      case State::Game:
+        case State::Game:
         gameLoop();
         break;
+      }
     }
   }
 
@@ -102,7 +103,7 @@ namespace gw {
     packet.type = PacketType::Ping;
     packet.ping.sequence = 42;
 
-    m_socket.send(packet);
+    m_threadCom.sendPacket(packet);
   }
 
   void GameState::quickMacth() {
@@ -110,16 +111,16 @@ namespace gw {
     packet.type = PacketType::QuickMatch;
     packet.quickMatch.playerID = m_playerID;
 
-    m_socket.send(packet);
+    m_threadCom.sendPacket(packet);
   }
 
-  Packet GameState::newPlayer() {
-    Packet packet;
-    m_socket.receive(packet);
+  void GameState::newPlayer() {
+    Packet packet = m_threadCom.receivePacket();
 
     assert(packet.type == PacketType::NewPlayer);
 
-    return packet;
+    m_playerID = packet.newPlayer.playerID;
+    gf::Log::info("Player ID: %lx\n", m_playerID);
   }
 
   void GameState::lobbyLoop() {
@@ -130,7 +131,7 @@ namespace gw {
 
     gf::Clock clock;
 
-    while (m_window.isOpen()) {
+    while (m_window.isOpen() && m_state == State::Lobby) {
       gf::Event event;
 
       while (m_window.pollEvent(event)) {
@@ -161,7 +162,28 @@ namespace gw {
       m_renderer.display();
 
       m_lobbyActions.reset();
+
+      lobbyProcessPackets();
     }
+  }
+
+  void GameState::lobbyProcessPackets() {
+    Packet packet;
+    while (m_comQueue.poll(packet)) {
+      switch (packet.type) {
+        case PacketType::Ping:
+        case PacketType::NewPlayer:
+        case PacketType::QuickMatch:
+          // Nothing to do
+          break;
+
+        case PacketType::JoinGame:
+          gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
+          m_state = State::Game;
+          break;
+      }
+    }
+
   }
 
   void GameState::gameLoop() {

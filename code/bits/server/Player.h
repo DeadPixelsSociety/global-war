@@ -1,7 +1,7 @@
 #ifndef BITS_SERVER_PLAYER_H
 #define BITS_SERVER_PLAYER_H
 
-#include "ThreadCom.h"
+#include "../common/ThreadCom.h"
 
 namespace gw {
 

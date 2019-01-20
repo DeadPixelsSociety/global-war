@@ -11,6 +11,7 @@ namespace gw {
     Ping,
     NewPlayer,
     QuickMatch,
+    JoinGame,
   };
 
   struct PacketPing {
@@ -26,6 +27,10 @@ namespace gw {
     gf::Id playerID;
   };
 
+  struct JoinGame {
+    gf::Id gameID;
+  };
+
 
   struct Packet {
     PacketType type;
@@ -34,6 +39,7 @@ namespace gw {
       PacketPing ping;
       NewPlayer newPlayer;
       QuickMatch quickMatch;
+      JoinGame joinGame;
     };
   };
 
@@ -53,6 +59,10 @@ namespace gw {
 
       case PacketType::QuickMatch:
         ar | packet.quickMatch.playerID;
+        break;
+
+      case PacketType::JoinGame:
+        ar | packet.joinGame.gameID;
         break;
     }
 

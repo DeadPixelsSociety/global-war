@@ -15,6 +15,7 @@ add_executable(global-war
   bits/client/WaitScreen.cc
 
   bits/common/Sockets.cc
+  bits/common/ThreadCom.cc
 )
 
 target_include_directories(global-war
@@ -42,9 +43,9 @@ add_executable(global-war-server
   bits/server/GameSession.cc
   bits/server/Lobby.cc
   bits/server/Player.cc
-  bits/server/ThreadCom.cc
 
   bits/common/Sockets.cc
+  bits/common/ThreadCom.cc
 )
 
 target_include_directories(global-war-server

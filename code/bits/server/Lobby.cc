@@ -52,11 +52,17 @@ namespace gw {
       break;
 
     case PacketType::QuickMatch:
+    {
       gf::Id playerID = packet.quickMatch.playerID;
       gf::Log::info("Player ID: %lx\n", playerID);
       m_players.at(playerID).waitGame();
       createNewGame();
       gf::Log::info("Available players: %lu\n", m_players.size());
+      break;
+    }
+
+    case PacketType::JoinGame:
+      gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
       break;
     }
   }

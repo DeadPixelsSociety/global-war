@@ -12,6 +12,7 @@
 
 #include "../common/Packet.h"
 #include "../common/Sockets.h"
+#include "../common/ThreadCom.h"
 
 #include "ArmySelection.h"
 #include "ClientArmy.h"
@@ -28,10 +29,13 @@ namespace gw {
   private:
     void ping();
     void quickMacth();
-    Packet newPlayer();
+    void newPlayer();
 
     void lobbyLoop();
+    void lobbyProcessPackets();
+
     void gameLoop();
+
 
   private:
     enum class State {
@@ -48,8 +52,9 @@ namespace gw {
     gf::RenderWindow m_renderer;
 
     // Network
-    SocketTcp m_socket;
     gf::Id m_playerID;
+    gf::Queue<Packet> m_comQueue;
+    ThreadCom m_threadCom;
 
     // Views
     gf::ExtendView m_mainView;
