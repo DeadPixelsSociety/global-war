@@ -56,6 +56,7 @@ namespace gw {
       gf::Log::info("Player ID: %lx\n", playerID);
       m_players.at(playerID).waitGame();
       createNewGame();
+      gf::Log::info("Available players: %lu\n", m_players.size());
       break;
     }
   }

@@ -14,11 +14,12 @@ namespace gw {
     };
 
   public:
-    Player(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId);
+    Player(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerID);
 
     State getState() const;
 
     void waitGame();
+    void plays();
 
     void sendPacket(Packet &packet);
     void initialize();

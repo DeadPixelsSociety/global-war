@@ -15,6 +15,8 @@ namespace gw {
   public:
     GameSession(gf::Id gameID, std::map<gf::Id, Player> &players);
 
+    void launchGame();
+
   private:
     gf::Id m_gameID;
     gf::Queue<Packet> m_queue;

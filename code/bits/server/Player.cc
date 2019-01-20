@@ -1,9 +1,10 @@
 #include "Player.h"
 
 namespace gw {
-  Player::Player(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerId)
+  Player::Player(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerID)
   : m_com(std::move(socket), queue)
-  , m_state(State::Idle) {
+  , m_state(State::Idle)
+  , m_playerID(playerID) {
   }
 
   Player::State Player::getState() const {
@@ -12,6 +13,10 @@ namespace gw {
 
   void Player::waitGame() {
     m_state = State::WaitingMatch;
+  }
+
+  void Player::plays() {
+    m_state = State::Playing;
   }
 
   void Player::sendPacket(Packet &packet) {
