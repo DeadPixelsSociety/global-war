@@ -5,21 +5,15 @@
 #include <gf/Entity.h>
 #include <gf/Path.h>
 
+#include "../common/MapModel.h"
+
 namespace gw {
 
-  class ClientMap : public gf::Entity {
+  class ClientMap : public gf::Entity, public MapModel {
   public:
-    static constexpr int Width = 32;
-    static constexpr int Height = 32;
-
     ClientMap(const gf::Path& path);
 
-    gf::Vector2i getPosition(gf::Vector2f coords) const;
-
     virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
-
-  private:
-    gf::Array2D<int, int> m_map;
   };
 
 }

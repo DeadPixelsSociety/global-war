@@ -4,7 +4,7 @@
 
 #include <gf/Log.h>
 
-#include "Hexagon.h"
+#include "../common/Hexagon.h"
 
 namespace gw {
 

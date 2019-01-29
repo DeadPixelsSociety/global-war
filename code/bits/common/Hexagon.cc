@@ -6,9 +6,6 @@
 #include <gf/VectorOps.h>
 
 namespace gw {
-//     constexpr gf::Vector2i posToHex(gf::Vector2i pos) {
-//       return { pos.x * 2 + pos.y % 2, pos.y };
-//     }
 
   namespace {
 

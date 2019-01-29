@@ -6,7 +6,7 @@
 #include <gf/Shapes.h>
 #include <gf/Text.h>
 
-#include "Hexagon.h"
+#include "../common/Hexagon.h"
 namespace gw {
 
   ClientArmy::ClientArmy(gf::ResourceManager& resources)

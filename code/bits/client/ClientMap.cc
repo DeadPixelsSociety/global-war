@@ -1,69 +1,28 @@
 #include "ClientMap.h"
 
-#include <cassert>
-
-#include <iostream>
-#include <fstream>
-
 #include <gf/Shapes.h>
 #include <gf/RenderTarget.h>
-#include <gf/VectorOps.h>
 
-#include "Hexagon.h"
+#include "../common/Hexagon.h"
 
 namespace gw {
 
-  namespace {
-
-    static constexpr int Sea = 0;
-    static constexpr int Land = 1;
-
-  }
-
   ClientMap::ClientMap(const gf::Path& path)
-  : m_map({ Width, Height }, Sea)
-  {
-    std::ifstream file(path.string());
-    int y = 0;
+  : MapModel(path) {
 
-    for (std::string line; std::getline(file, line); ) {
-      assert(line.size() == Width);
-      assert(y < Height);
-
-      for (int x = 0; x < Width; ++x) {
-        switch (line[x]) {
-          case '#':
-            m_map({ x, y }) = Sea;
-            std::cout << '#';
-            break;
-          case ' ':
-            m_map({ x, y }) = Land;
-            std::cout << ' ';
-            break;
-        }
-      }
-
-      std::cout << '\n';
-      ++y;
-    }
-
-  }
-
-  gf::Vector2i ClientMap::getPosition(gf::Vector2f coords) const {
-    return Hexagon::coordinatesToPosition(coords);
   }
 
   void ClientMap::render(gf::RenderTarget& target, const gf::RenderStates& states) {
-
-
     for (gf::Vector2i pos : m_map.getPositionRange()) {
       gf::CircleShape hex(Hexagon::Size, 6);
 
-      switch (m_map(pos)) {
-        case Sea:
+      TileType type = static_cast<TileType>(m_map(pos));
+
+      switch (type) {
+        case TileType::Sea:
           hex.setColor(gf::Color::Azure);
           break;
-        case Land:
+        case TileType::Land:
           hex.setColor(gf::Color::Chartreuse);
           break;
         default:
@@ -81,4 +40,3 @@ namespace gw {
   }
 
 }
-
