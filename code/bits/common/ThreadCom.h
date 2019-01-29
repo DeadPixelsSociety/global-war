@@ -1,6 +1,8 @@
 #ifndef BITS_SERVER_THREAD_COM_H
 #define BITS_SERVER_THREAD_COM_H
 
+#include <functional>
+
 #include <gf/Id.h>
 #include <gf/Queue.h>
 
@@ -16,10 +18,8 @@ namespace gw {
     void setQueue(gf::Queue<Packet>* queue);
 
     void start();
-    void sendPacket(Packet &packet);
-    Packet receivePacket();
-
-  private:
+    bool sendPacket(Packet &packet);
+    bool receivePacket(Packet &packet);
     void receivePackets();
 
   private:

@@ -52,6 +52,10 @@ namespace gw {
   }
 
   void SocketTcp::send(Packet &packet) {
+    if (m_state == SocketState::Disconnected) {
+      return;
+    }
+
     constexpr int MaxLength = 1024;
     uint8_t data[MaxLength];
 
@@ -60,22 +64,33 @@ namespace gw {
 
     ar | packet;
 
-    boost::asio::write(m_socket, boost::asio::buffer(data, MaxLength));
+    boost::system::error_code error;
+    boost::asio::write(m_socket, boost::asio::buffer(data, MaxLength), error);
+
+    if (error == boost::asio::error::eof) {
+      m_state = SocketState::Disconnected;
+      return; // Connection closed cleanly by peer
+    } else if (error) {
+      throw boost::system::system_error(error);
+    }
   }
 
   void SocketTcp::receive(Packet &packet) {
+    if (m_state == SocketState::Disconnected) {
+      return;
+    }
+
     constexpr int MaxLength = 1024;
     uint8_t data[MaxLength];
 
     boost::system::error_code error;
-
     size_t length = m_socket.read_some(boost::asio::buffer(data), error);
 
     if (error == boost::asio::error::eof) {
       m_state = SocketState::Disconnected;
-      return; // Connection closed cleanly by peer.
+      return; // Connection closed cleanly by peer
     } else if (error) {
-      throw boost::system::system_error(error); // Some other error.
+      throw boost::system::system_error(error);
     }
 
     gf::MemoryInputStream stream(gf::ArrayRef<uint8_t>(data, length));

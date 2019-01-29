@@ -17,6 +17,7 @@ namespace gw {
     Player(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerID);
 
     State getState() const;
+    gf::Id getID() const;
 
     void waitGame();
     void plays();

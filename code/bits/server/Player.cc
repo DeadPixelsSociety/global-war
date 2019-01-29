@@ -11,6 +11,10 @@ namespace gw {
     return m_state;
   }
 
+  gf::Id Player::getID() const {
+    return m_playerID;
+  }
+
   void Player::waitGame() {
     m_state = State::WaitingMatch;
   }
@@ -24,7 +28,10 @@ namespace gw {
   }
 
   void Player::initialize() {
-    m_com.start();
+
+    std::thread([this]() {
+      m_com.start();
+    }).detach();
   }
 
   void Player::updateQueue(gf::Queue<Packet> *queue) {

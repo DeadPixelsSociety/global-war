@@ -28,23 +28,23 @@ namespace gw {
     std::thread(&ThreadCom::receivePackets, this).detach();
   }
 
-  void ThreadCom::sendPacket(Packet &packet) {
+  bool ThreadCom::sendPacket(Packet &packet) {
     m_socket.send(packet);
+
+    return !(m_socket.getState() == SocketState::Disconnected);
   }
 
-  Packet ThreadCom::receivePacket() {
-    Packet packet;
+  bool ThreadCom::receivePacket(Packet &packet) {
     m_socket.receive(packet);
 
-    return packet;
+    return !(m_socket.getState() == SocketState::Disconnected);
   }
 
   void ThreadCom::receivePackets() {
     for(;;) {
       Packet packet;
-      m_socket.receive(packet);
 
-      if (m_socket.getState() == SocketState::Disconnected) {
+      if (!receivePacket(packet)) {
         break;
       }
 

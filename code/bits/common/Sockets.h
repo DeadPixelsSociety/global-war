@@ -32,7 +32,7 @@ namespace gw {
     void receive(Packet &packet);
 
   private:
-    boost::asio::io_service m_ioService;
+    boost::asio::io_service m_ioService; // Move to static ? @ahugeat
     boost::asio::ip::tcp::socket m_socket;
     SocketState m_state;
   };

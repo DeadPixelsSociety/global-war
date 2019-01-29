@@ -103,7 +103,7 @@ namespace gw {
     packet.type = PacketType::Ping;
     packet.ping.sequence = 42;
 
-    m_threadCom.sendPacket(packet);
+    assert(m_threadCom.sendPacket(packet));
   }
 
   void GameState::quickMacth() {
@@ -111,11 +111,12 @@ namespace gw {
     packet.type = PacketType::QuickMatch;
     packet.quickMatch.playerID = m_playerID;
 
-    m_threadCom.sendPacket(packet);
+    assert(m_threadCom.sendPacket(packet));
   }
 
   void GameState::newPlayer() {
-    Packet packet = m_threadCom.receivePacket();
+    Packet packet;
+    assert(m_threadCom.receivePacket(packet));
 
     assert(packet.type == PacketType::NewPlayer);
 
