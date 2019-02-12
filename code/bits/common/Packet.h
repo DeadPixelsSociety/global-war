@@ -4,6 +4,7 @@
 #include <cstdint>
 
 #include <gf/Id.h>
+#include <gf/Vector.h>
 
 namespace gw {
 
@@ -12,6 +13,7 @@ namespace gw {
     NewPlayer,
     QuickMatch,
     JoinGame,
+    CreateRegiment,
   };
 
   struct PacketPing {
@@ -31,6 +33,12 @@ namespace gw {
     gf::Id gameID;
   };
 
+  struct CreateRegiment {
+    int count;
+    gf::Vector2i position;
+    gf::Id ownerID;
+  };
+
 
   struct Packet {
     PacketType type;
@@ -40,9 +48,9 @@ namespace gw {
       NewPlayer newPlayer;
       QuickMatch quickMatch;
       JoinGame joinGame;
+      CreateRegiment createRegiment;
     };
   };
-
 
   template<class Archive>
   Archive& operator|(Archive& ar, Packet& packet) {
@@ -63,6 +71,13 @@ namespace gw {
 
       case PacketType::JoinGame:
         ar | packet.joinGame.gameID;
+        break;
+
+      case PacketType::CreateRegiment:
+        ar | packet.createRegiment.count;
+        ar | packet.createRegiment.position.x;
+        ar | packet.createRegiment.position.y;
+        ar | packet.createRegiment.ownerID;
         break;
     }
 

@@ -8,11 +8,14 @@
 #include <gf/ResourceManager.h>
 #include <gf/Vector.h>
 
+#include "../common/Packet.h"
+
 namespace gw {
 
   struct Regiment {
     int count;
     gf::Vector2i position;
+    gf::Id ownerID;
   };
 
   inline bool operator<(const Regiment& lhs, const Regiment& rhs) {
@@ -32,12 +35,15 @@ namespace gw {
     ClientArmy(gf::ResourceManager& resources);
 
     const Regiment* getRegiment(gf::Vector2i position) const;
+    void createRegiment(int count, gf::Vector2i position, gf::Id ownerID);
+
+    void setPlayerID(gf::Id playerID);
 
     virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
 
-
   private:
     gf::Font& m_font;
+    gf::Id m_playerID;
 
     std::set<Regiment, std::less<>> m_army;
   };

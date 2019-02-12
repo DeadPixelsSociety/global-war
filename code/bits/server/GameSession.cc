@@ -22,6 +22,21 @@ namespace gw {
     for (Player *player: m_players) {
       player->sendPacket(packet);
     }
+
+    // Create the player's regiments
+    packet.type = PacketType::CreateRegiment;
+    for (std::size_t i = 0; i < m_players.size(); ++i) {
+      Player &player = *m_players[i];
+
+      packet.createRegiment.count = 40;
+      packet.createRegiment.position = { 0, static_cast<int>(i) };
+      packet.createRegiment.ownerID = player.getID();
+
+      // Send this regiment at all players
+      for (auto p: m_players) {
+        p->sendPacket(packet);
+      }
+    }
   }
 
   void GameSession::launchGame() {
@@ -44,6 +59,10 @@ namespace gw {
 
       case PacketType::JoinGame:
         gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
+        break;
+
+      case PacketType::CreateRegiment:
+        assert(false);
         break;
       }
     }).detach();

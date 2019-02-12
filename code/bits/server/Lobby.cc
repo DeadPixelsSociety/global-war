@@ -64,6 +64,10 @@ namespace gw {
     case PacketType::JoinGame:
       gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
       break;
+
+    case PacketType::CreateRegiment:
+      assert(false);
+      break;
     }
   }
 

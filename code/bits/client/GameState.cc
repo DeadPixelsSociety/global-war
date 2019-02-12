@@ -121,6 +121,7 @@ namespace gw {
     assert(packet.type == PacketType::NewPlayer);
 
     m_playerID = packet.newPlayer.playerID;
+    m_army.setPlayerID(m_playerID);
     gf::Log::info("Player ID: %lx\n", m_playerID);
   }
 
@@ -175,12 +176,36 @@ namespace gw {
         case PacketType::Ping:
         case PacketType::NewPlayer:
         case PacketType::QuickMatch:
+        case PacketType::CreateRegiment:
           // Nothing to do
           break;
 
         case PacketType::JoinGame:
           gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
           m_state = State::Game;
+          break;
+      }
+    }
+
+  }
+
+  void GameState::gameProcessPackets() {
+    Packet packet;
+    while (m_comQueue.poll(packet)) {
+      switch (packet.type) {
+        case PacketType::Ping:
+        case PacketType::NewPlayer:
+        case PacketType::QuickMatch:
+        case PacketType::JoinGame:
+          // Nothing to do
+          break;
+
+        case PacketType::CreateRegiment:
+          gf::Log::info("Regiment created: {count: %d, pos: %d,%d, owner: %lx}\n",
+            packet.createRegiment.count, packet.createRegiment.position.x,
+            packet.createRegiment.position.y, packet.createRegiment.ownerID);
+
+          m_army.createRegiment(packet.createRegiment.count, packet.createRegiment.position, packet.createRegiment.ownerID);
           break;
       }
     }
@@ -248,6 +273,8 @@ namespace gw {
       m_renderer.display();
 
       m_gameActions.reset();
+
+      gameProcessPackets();
     }
   }
 }

@@ -35,6 +35,7 @@ namespace gw {
     void lobbyProcessPackets();
 
     void gameLoop();
+    void gameProcessPackets();
 
 
   private:
