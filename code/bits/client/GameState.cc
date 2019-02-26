@@ -2,11 +2,14 @@
 
 #include <gf/Color.h>
 #include <gf/Vector.h>
+#include <gf/VectorOps.h>
+
+#include "../common/Hexagon.h"
 
 namespace gw {
   static constexpr gf::Vector2u ScreenSize(1024, 576);
-  static constexpr gf::Vector2f ViewSize(1000.0f, 1000.0f); // dummy values
-  static constexpr gf::Vector2f ViewCenter(0.0f, 0.0f); // dummy values
+  static constexpr gf::Vector2f ViewSize(Hexagon::Size * gf::Vector2f(10.0f, 10.0f));
+  static constexpr gf::Vector2f ViewCenter(0.0f, 0.0f);
 
   GameState::GameState(char* hostname, char *port, gf::ResourceManager &resources)
   : m_state(State::Lobby)
@@ -192,9 +195,6 @@ namespace gw {
           auto it = packet.joinGame.playersID.begin();
           m_clientModel.allPlayerID.insert(m_clientModel.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
 
-          for (std::size_t i = 0; i < m_clientModel.allPlayerID.size(); ++i) {
-            gf::Log::info("Players[%lu] ID = %lx\n", i, m_clientModel.allPlayerID[i]);
-          }
           m_state = State::Game;
           break;
       }
