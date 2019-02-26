@@ -10,9 +10,9 @@
 
 namespace gw {
 
-  ClientArmy::ClientArmy(gf::ResourceManager& resources)
+  ClientArmy::ClientArmy(gf::ResourceManager& resources, ClientModel &clientModel)
   : m_font(resources.getFont("DejaVuSans.ttf"))
-  , m_playerID(InvalidPlayerID)
+  , m_clientModel(clientModel)
   {
   }
 
@@ -31,21 +31,11 @@ namespace gw {
     m_army.insert({ count, position, ownerID });
   }
 
-  void ClientArmy::setPlayerID(gf::Id playerID) {
-    m_playerID = playerID;
-  }
-
   void ClientArmy::render(gf::RenderTarget& target, const gf::RenderStates& states) {
     for (auto& regiment : m_army) {
       auto position = Hexagon::positionToCoordinates(regiment.position);
 
-      gf::Color4f colorLight;
-      if (regiment.ownerID == m_playerID) {
-        colorLight = gf::Color::Yellow;
-      }
-      else {
-        colorLight = gf::Color::Green;
-      }
+      gf::Color4f colorLight = m_clientModel.getPlayerColor(regiment.ownerID);
       gf::Color4f colorMedium = gf::Color::darker(colorLight);
       gf::Color4f colorDark = gf::Color::darker(colorMedium);
 

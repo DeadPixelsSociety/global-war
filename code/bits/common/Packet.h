@@ -1,12 +1,16 @@
 #ifndef GW_PACKET_H
 #define GW_PACKET_H
 
+#include <array>
 #include <cstdint>
 
 #include <gf/Id.h>
 #include <gf/Vector.h>
+#include <gf/VectorOps.h>
 
 namespace gw {
+
+  static constexpr int MaxPlayers = 8;
 
   enum class PacketType : uint16_t {
     Ping,
@@ -31,6 +35,8 @@ namespace gw {
 
   struct JoinGame {
     gf::Id gameID;
+    int nbPlayers;
+    std::array<gf::Id, MaxPlayers> playersID;
   };
 
   struct CreateRegiment {
@@ -71,12 +77,13 @@ namespace gw {
 
       case PacketType::JoinGame:
         ar | packet.joinGame.gameID;
+        ar | packet.joinGame.nbPlayers;
+        ar | packet.joinGame.playersID;
         break;
 
       case PacketType::CreateRegiment:
         ar | packet.createRegiment.count;
-        ar | packet.createRegiment.position.x;
-        ar | packet.createRegiment.position.y;
+        ar | packet.createRegiment.position;
         ar | packet.createRegiment.ownerID;
         break;
     }

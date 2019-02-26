@@ -9,7 +9,7 @@ using boost::asio::ip::tcp;
 using namespace gf::literals;
 
 namespace gw {
-  static constexpr int GameLimitPlayer = 2;
+  static constexpr int GameLimitPlayer = 3;
 
   Lobby::Lobby(gf::Random &random, std::uint16_t port)
   : m_random(random)

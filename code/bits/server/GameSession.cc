@@ -11,6 +11,11 @@ namespace gw {
         player.second.plays();
         m_players.push_back(&player.second);
       }
+
+      // Sort player by ID
+      std::sort(m_players.begin(), m_players.end(), [](Player *rhs, Player *lhs){
+        return rhs->getID() < lhs->getID();
+      });
     }
 
     gf::Log::info("New game session created with %lu players\n", m_players.size());
@@ -19,6 +24,14 @@ namespace gw {
     Packet packet;
     packet.type = PacketType::JoinGame;
     packet.joinGame.gameID = m_gameID;
+    packet.joinGame.nbPlayers = m_players.size();
+
+    // Add all player IDs
+    for (std::size_t i = 0; i < m_players.size(); ++i) {
+      packet.joinGame.playersID[i] = m_players[i]->getID();
+    }
+
+    // Send packet at all client
     for (Player *player: m_players) {
       player->sendPacket(packet);
     }

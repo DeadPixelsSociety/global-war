@@ -12,7 +12,6 @@ namespace gw {
   : m_state(State::Lobby)
   , m_window("Global War", ScreenSize)
   , m_renderer(m_window)
-  , m_playerID(InvalidPlayerID)
   , m_threadCom(hostname, port, m_comQueue)
   , m_mainView(ViewCenter, ViewSize)
   , m_adaptor(m_renderer, m_mainView)
@@ -25,7 +24,7 @@ namespace gw {
   , m_pingAction("Ping")
   , m_waitScreen(resources.getFont("DejaVuSans.ttf"))
   , m_map(resources.getAbsolutePath("map.txt"))
-  , m_army(resources)
+  , m_army(resources, m_clientModel)
   , m_armySelection(m_map, m_army, m_renderer, m_mainView) {
     // Init screen
     m_window.setVerticalSyncEnabled(true);
@@ -109,7 +108,7 @@ namespace gw {
   void GameState::quickMacth() {
     Packet packet;
     packet.type = PacketType::QuickMatch;
-    packet.quickMatch.playerID = m_playerID;
+    packet.quickMatch.playerID = m_clientModel.currentPlayerID;
 
     assert(m_threadCom.sendPacket(packet));
   }
@@ -120,9 +119,8 @@ namespace gw {
 
     assert(packet.type == PacketType::NewPlayer);
 
-    m_playerID = packet.newPlayer.playerID;
-    m_army.setPlayerID(m_playerID);
-    gf::Log::info("Player ID: %lx\n", m_playerID);
+    m_clientModel.currentPlayerID = packet.newPlayer.playerID;
+    gf::Log::info("Player ID: %lx\n", m_clientModel.currentPlayerID);
   }
 
   void GameState::lobbyLoop() {
@@ -182,6 +180,18 @@ namespace gw {
 
         case PacketType::JoinGame:
           gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
+          gf::Log::info("Number players: %d\n", packet.joinGame.nbPlayers);
+          for (int i = 0; i < packet.joinGame.nbPlayers; ++i) {
+            gf::Log::info("Players[%d] ID = %lx\n", i, packet.joinGame.playersID[i]);
+          }
+
+          // Add playerIDs to the client model
+          auto it = packet.joinGame.playersID.begin();
+          m_clientModel.allPlayerID.insert(m_clientModel.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
+
+          for (std::size_t i = 0; i < m_clientModel.allPlayerID.size(); ++i) {
+            gf::Log::info("Players[%lu] ID = %lx\n", i, m_clientModel.allPlayerID[i]);
+          }
           m_state = State::Game;
           break;
       }

@@ -10,6 +10,8 @@
 
 #include "../common/Packet.h"
 
+#include "ClientModel.h"
+
 namespace gw {
 
   struct Regiment {
@@ -32,18 +34,16 @@ namespace gw {
 
   class ClientArmy : public gf::Entity {
   public:
-    ClientArmy(gf::ResourceManager& resources);
+    ClientArmy(gf::ResourceManager& resources, ClientModel &clientModel);
 
     const Regiment* getRegiment(gf::Vector2i position) const;
     void createRegiment(int count, gf::Vector2i position, gf::Id ownerID);
-
-    void setPlayerID(gf::Id playerID);
 
     virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
 
   private:
     gf::Font& m_font;
-    gf::Id m_playerID;
+    ClientModel &m_clientModel;
 
     std::set<Regiment, std::less<>> m_army;
   };

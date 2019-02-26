@@ -17,6 +17,7 @@
 #include "ArmySelection.h"
 #include "ClientArmy.h"
 #include "ClientMap.h"
+#include "ClientModel.h"
 #include "WaitScreen.h"
 
 namespace gw {
@@ -53,7 +54,6 @@ namespace gw {
     gf::RenderWindow m_renderer;
 
     // Network
-    gf::Id m_playerID;
     gf::Queue<Packet> m_comQueue;
     ThreadCom m_threadCom;
 
@@ -78,6 +78,9 @@ namespace gw {
     gf::Action m_upAction;
     gf::Action m_downAction;
     gf::Action m_pingAction;
+
+    // Model
+    ClientModel m_clientModel;
 
     // Entities
     // for lobby
