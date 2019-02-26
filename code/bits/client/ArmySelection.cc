@@ -16,9 +16,10 @@ namespace gw {
 
   }
 
-  ArmySelection::ArmySelection(ClientMap& map, ClientArmy& army, const gf::RenderTarget& target, const gf::View& view)
+  ArmySelection::ArmySelection(ClientMap& map, ClientArmy& army, ClientModel& clientModel, const gf::RenderTarget& target, const gf::View& view)
   : m_map(&map)
   , m_army(&army)
+  , m_clientModel(clientModel)
   , m_target(&target)
   , m_view(&view)
   {
@@ -34,7 +35,7 @@ namespace gw {
           if (isPositionValid(position)) {
             auto regiment = m_army->getRegiment(position);
 
-            if (regiment != nullptr) {
+            if (regiment != nullptr && regiment->ownerID == m_clientModel.currentPlayerID) {
               m_source = position;
               gf::Log::info("source: %i x %i\n", position.x, position.y);
               m_state = State::WaitingDestination;

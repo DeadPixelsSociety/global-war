@@ -25,7 +25,7 @@ namespace gw {
   , m_waitScreen(resources.getFont("DejaVuSans.ttf"))
   , m_map(resources.getAbsolutePath("map.txt"))
   , m_army(resources, m_clientModel)
-  , m_armySelection(m_map, m_army, m_renderer, m_mainView) {
+  , m_armySelection(m_map, m_army, m_clientModel, m_renderer, m_mainView) {
     // Init screen
     m_window.setVerticalSyncEnabled(true);
     m_window.setFramerateLimit(60);
