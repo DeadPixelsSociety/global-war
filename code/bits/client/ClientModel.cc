@@ -3,6 +3,10 @@
 #include <cassert>
 
 namespace gw {
+  gf::Color4f ClientModel::getPlayerColor() {
+    return getPlayerColor(currentPlayerID);
+  }
+
   gf::Color4f ClientModel::getPlayerColor(gf::Id playerID) {
     if (allPlayerID[0] == playerID) {
       return gf::Color::Green;

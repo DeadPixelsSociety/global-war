@@ -18,6 +18,7 @@
 #include "ClientArmy.h"
 #include "ClientMap.h"
 #include "ClientModel.h"
+#include "HUD.h"
 #include "WaitScreen.h"
 
 namespace gw {
@@ -92,6 +93,7 @@ namespace gw {
     ClientMap m_map;
     ClientArmy m_army;
     gf::EntityContainer m_hudEntities;
+    HUD m_hud;
 
     // State machines
     ArmySelection m_armySelection;

@@ -11,6 +11,8 @@ namespace gw {
     // Players management
     gf::Id currentPlayerID;
     std::vector<gf::Id> allPlayerID;
+
+    gf::Color4f getPlayerColor();
     gf::Color4f getPlayerColor(gf::Id playerID);
 
   };
