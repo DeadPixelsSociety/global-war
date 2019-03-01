@@ -66,6 +66,7 @@ namespace gw {
       break;
 
     case PacketType::CreateRegiment:
+    case PacketType::MoveRegiment:
       assert(false);
       break;
     }

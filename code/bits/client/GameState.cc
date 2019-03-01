@@ -181,6 +181,7 @@ namespace gw {
         case PacketType::NewPlayer:
         case PacketType::QuickMatch:
         case PacketType::CreateRegiment:
+        case PacketType::MoveRegiment:
           // Nothing to do
           break;
 
@@ -210,6 +211,7 @@ namespace gw {
         case PacketType::NewPlayer:
         case PacketType::QuickMatch:
         case PacketType::JoinGame:
+        case PacketType::MoveRegiment:
           // Nothing to do
           break;
 

@@ -18,6 +18,7 @@ namespace gw {
     QuickMatch,
     JoinGame,
     CreateRegiment,
+    MoveRegiment,
   };
 
   struct PacketPing {
@@ -35,14 +36,20 @@ namespace gw {
 
   struct JoinGame {
     gf::Id gameID;
-    int nbPlayers;
+    int32_t nbPlayers;
     std::array<gf::Id, MaxPlayers> playersID;
   };
 
   struct CreateRegiment {
-    int count;
-    gf::Vector2i position;
+    int32_t count;
+    gf::Vector<int32_t, 2> position;
     gf::Id ownerID;
+  };
+
+  struct MoveRegiment {
+    gf::Id playerID;
+    gf::Vector<int32_t, 2> regimentOrigin;
+    gf::Vector<int32_t, 2> regimentDestination;
   };
 
 
@@ -55,6 +62,7 @@ namespace gw {
       QuickMatch quickMatch;
       JoinGame joinGame;
       CreateRegiment createRegiment;
+      MoveRegiment moveRegiment;
     };
   };
 
@@ -85,6 +93,12 @@ namespace gw {
         ar | packet.createRegiment.count;
         ar | packet.createRegiment.position;
         ar | packet.createRegiment.ownerID;
+        break;
+
+      case PacketType::MoveRegiment:
+        ar | packet.moveRegiment.playerID;
+        ar | packet.moveRegiment.regimentOrigin;
+        ar | packet.moveRegiment.regimentDestination;
         break;
     }
 
