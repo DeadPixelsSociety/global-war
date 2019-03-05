@@ -11,8 +11,10 @@ add_executable(global-war
   bits/client/ClientArmy.cc
   bits/client/ClientMap.cc
   bits/client/ClientModel.cc
-  bits/client/GameState.cc
+  bits/client/GameStage.cc
   bits/client/HUD.cc
+  bits/client/LobbyStage.cc
+  bits/client/Stage.cc
   bits/client/WaitScreen.cc
 
   bits/common/Hexagon.cc

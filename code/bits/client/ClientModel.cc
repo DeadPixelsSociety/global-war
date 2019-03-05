@@ -2,7 +2,28 @@
 
 #include <cassert>
 
+#include <gf/Log.h>
+
 namespace gw {
+  ClientModel::ClientModel(char *hostname, char* port)
+  : threadCom(hostname, port, comQueue) {
+    // Retreive the player ID
+    Packet packet;
+    assert(threadCom.receivePacket(packet));
+    assert(packet.type == PacketType::NewPlayer);
+
+    currentPlayerID = packet.newPlayer.playerID;
+    gf::Log::info("Player ID: %lx\n", currentPlayerID);
+  }
+
+  void ClientModel::quickMacth() {
+    Packet packet;
+    packet.type = PacketType::QuickMatch;
+    packet.quickMatch.playerID = currentPlayerID;
+
+    assert(threadCom.sendPacket(packet));
+  }
+
   gf::Color4f ClientModel::getPlayerColor() {
     return getPlayerColor(currentPlayerID);
   }
