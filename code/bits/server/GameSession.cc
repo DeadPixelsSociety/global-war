@@ -4,10 +4,6 @@
 
 #include <gf/Clock.h>
 
-#include "../common/RegimentContainer.h"
-
-#include "Singletons.h"
-
 namespace gw {
   GameSession::GameSession(gf::Id gameID, std::map<gf::Id, Player> &players)
   : m_gameID(gameID) {
@@ -52,7 +48,7 @@ namespace gw {
       regiment.ownerID = player.getID();
       regiment.position = { 0, static_cast<int>(i) };
       regiment.count = 40;
-      gGameModel().regiments.army.insert(regiment);
+      m_gameState.data.regiments.insert(regiment);
 
       // TODO: Remove this packet to move this an the first init of GameModel
       packet.createRegiment.count = regiment.count;
@@ -97,7 +93,7 @@ namespace gw {
             regiment.position = packet.moveRegiment.regimentDestination;
             regiment.count = 1;
 
-            gGameModel().regiments.army.insert(regiment);
+            m_gameState.data.regiments.insert(regiment);
             break;
 
           case PacketType::CreateRegiment:
@@ -108,7 +104,7 @@ namespace gw {
 
         // Update model
         gf::Time time = clock.restart();
-        gGameModel().update(time);
+        m_gameState.update(time);
       }
     }).detach();
   }

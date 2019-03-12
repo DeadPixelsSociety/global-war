@@ -8,6 +8,7 @@
 
 #include "../common/Packet.h"
 
+#include "GameState.h"
 #include "Player.h"
 
 namespace gw {
@@ -21,6 +22,7 @@ namespace gw {
     gf::Id m_gameID;
     gf::Queue<Packet> m_queue;
     std::vector<Player*> m_players;
+    GameState m_gameState;
   };
 }
 

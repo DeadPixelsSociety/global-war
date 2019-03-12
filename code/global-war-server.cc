@@ -3,15 +3,11 @@
 #include <gf/Random.h>
 
 #include "bits/server/Lobby.h"
-#include "bits/server/Singletons.h"
 
 using boost::asio::ip::tcp;
 
 int main(int argc, char *argv[]) {
   gf::Random random;
-
-  // Init singleton
-  gf::SingletonStorage<gw::GameModel> storageForGameModel(gw::gGameModel);
 
   try {
     if (argc != 2) {

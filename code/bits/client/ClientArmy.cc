@@ -17,16 +17,16 @@ namespace gw {
   }
 
   const Regiment* ClientArmy::getRegiment(gf::Vector2i position) const {
-    return m_regiments[position];
+    return m_data.getRegiment(position);
   }
 
 
   void ClientArmy::createRegiment(int count, gf::Vector2i position, gf::Id ownerID) {
-    m_regiments.army.insert({ ownerID, count, position });
+    m_data.regiments.insert({ ownerID, count, position });
   }
 
   void ClientArmy::render(gf::RenderTarget& target, const gf::RenderStates& states) {
-    for (auto& regiment : m_regiments.army) {
+    for (auto& regiment : m_data.regiments) {
       auto position = Hexagon::positionToCoordinates(regiment.position);
 
       gf::Color4f colorLight = m_clientModel.getPlayerColor(regiment.ownerID);

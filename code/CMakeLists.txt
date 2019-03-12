@@ -17,9 +17,9 @@ add_executable(global-war
   bits/client/Stage.cc
   bits/client/WaitScreen.cc
 
+  bits/common/Data.cc
   bits/common/Hexagon.cc
   bits/common/MapModel.cc
-  bits/common/RegimentContainer.cc
   bits/common/Sockets.cc
   bits/common/ThreadCom.cc
 )
@@ -46,13 +46,12 @@ install(
 
 add_executable(global-war-server
   global-war-server.cc
-  bits/server/GameModel.cc
   bits/server/GameSession.cc
+  bits/server/GameState.cc
   bits/server/Lobby.cc
   bits/server/Player.cc
-  bits/server/Singletons.cc
 
-  bits/common/RegimentContainer.cc
+  bits/common/Data.cc
   bits/common/Sockets.cc
   bits/common/ThreadCom.cc
 )

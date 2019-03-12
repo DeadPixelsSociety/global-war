@@ -27,13 +27,6 @@ namespace gw {
     return std::tie(lhs.position.x, lhs.position.y) < std::tie(rhs.x, rhs.y);
   }
 
-  struct RegimentContainer {
-    const Regiment* operator[](gf::Vector2i position) const;
-
-    std::set<Regiment, std::less<>> army;
-  };
-
-
 }
 
 #endif // BITS_COMMON_REGIMENT_CONTAINER_H

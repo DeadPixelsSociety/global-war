@@ -9,7 +9,7 @@
 #include <gf/Vector.h>
 
 #include "../common/Packet.h"
-#include "../common/RegimentContainer.h"
+#include "../common/Data.h"
 
 #include "ClientModel.h"
 
@@ -29,7 +29,7 @@ namespace gw {
     gf::Font& m_font;
     ClientModel &m_clientModel;
 
-    RegimentContainer m_regiments;
+    Data m_data;
   };
 
 }
