@@ -29,7 +29,7 @@ namespace gw {
     gf::Font& m_font;
     ClientModel &m_clientModel;
 
-    RegimentContainer m_army;
+    RegimentContainer m_regiments;
   };
 
 }

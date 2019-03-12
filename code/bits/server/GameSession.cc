@@ -52,7 +52,7 @@ namespace gw {
       regiment.ownerID = player.getID();
       regiment.position = { 0, static_cast<int>(i) };
       regiment.count = 40;
-      gGameModel().regiments().insert(regiment);
+      gGameModel().regiments.army.insert(regiment);
 
       // TODO: Remove this packet to move this an the first init of GameModel
       packet.createRegiment.count = regiment.count;
@@ -97,7 +97,7 @@ namespace gw {
             regiment.position = packet.moveRegiment.regimentDestination;
             regiment.count = 1;
 
-            gGameModel().regiments().insert(regiment);
+            gGameModel().regiments.army.insert(regiment);
             break;
 
           case PacketType::CreateRegiment:

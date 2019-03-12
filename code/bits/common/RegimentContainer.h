@@ -27,15 +27,10 @@ namespace gw {
     return std::tie(lhs.position.x, lhs.position.y) < std::tie(rhs.x, rhs.y);
   }
 
-  class RegimentContainer {
-  public:
+  struct RegimentContainer {
     const Regiment* operator[](gf::Vector2i position) const;
 
-    std::set<Regiment, std::less<>>& operator()();
-    const std::set<Regiment, std::less<>>& operator()() const;
-
-  private:
-    std::set<Regiment, std::less<>> m_army;
+    std::set<Regiment, std::less<>> army;
   };
 
 
