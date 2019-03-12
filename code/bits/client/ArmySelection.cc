@@ -52,7 +52,18 @@ namespace gw {
           if (isPositionValid(position) && Hexagon::areNeighbors(m_source, position)) {
             m_destination = position;
             gf::Log::info("destination: %i x %i\n", position.x, position.y);
-            m_state = State::Done;
+            m_state = State::WaitingRegiment;
+
+            // Send move to server
+            Packet packet;
+            packet.type = PacketType::MoveRegiment;
+            packet.moveRegiment.playerID = m_clientModel.currentPlayerID;
+            packet.moveRegiment.regimentOrigin = m_source;
+            packet.moveRegiment.regimentDestination = m_destination;
+
+            if (!m_clientModel.threadCom.sendPacket(packet)) {
+              std::abort();
+            }
           }
 
           break;

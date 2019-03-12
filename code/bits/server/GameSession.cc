@@ -2,6 +2,12 @@
 
 #include <thread>
 
+#include <gf/Clock.h>
+
+#include "../common/RegimentContainer.h"
+
+#include "Singletons.h"
+
 namespace gw {
   GameSession::GameSession(gf::Id gameID, std::map<gf::Id, Player> &players)
   : m_gameID(gameID) {
@@ -41,9 +47,17 @@ namespace gw {
     for (std::size_t i = 0; i < m_players.size(); ++i) {
       Player &player = *m_players[i];
 
-      packet.createRegiment.count = 40;
-      packet.createRegiment.position = { 0, static_cast<int>(i) };
-      packet.createRegiment.ownerID = player.getID();
+      // Add the new regiment to the model
+      Regiment regiment;
+      regiment.ownerID = player.getID();
+      regiment.position = { 0, static_cast<int>(i) };
+      regiment.count = 40;
+      gGameModel().regiments().insert(regiment);
+
+      // TODO: Remove this packet to move this an the first init of GameModel
+      packet.createRegiment.count = regiment.count;
+      packet.createRegiment.position = regiment.position;
+      packet.createRegiment.ownerID = regiment.ownerID;
 
       // Send this regiment at all players
       for (auto p: m_players) {
@@ -54,30 +68,47 @@ namespace gw {
 
   void GameSession::launchGame() {
     std::thread([this](){
-      Packet packet;
-      m_queue.wait(packet);
+      gf::Clock clock;
 
-      switch (packet.type) {
-      case PacketType::Ping:
-        gf::Log::info("Ping: %d\n", packet.ping.sequence);
-        break;
+      for(;;) {
+        // Process pending packet
+        Packet packet;
+        while (m_queue.poll(packet)) {
+          switch (packet.type) {
+          case PacketType::Ping:
+            gf::Log::info("Ping: %d\n", packet.ping.sequence);
+            break;
 
-      case PacketType::NewPlayer:
-        gf::Log::info("Player ID: %lx\n", packet.newPlayer.playerID);
-        break;
+          case PacketType::NewPlayer:
+            gf::Log::info("Player ID: %lx\n", packet.newPlayer.playerID);
+            break;
 
-      case PacketType::QuickMatch:
-        gf::Log::info("Player ID: %lx\n", packet.quickMatch.playerID);
-        break;
+          case PacketType::QuickMatch:
+            gf::Log::info("Player ID: %lx\n", packet.quickMatch.playerID);
+            break;
 
-      case PacketType::JoinGame:
-        gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
-        break;
+          case PacketType::JoinGame:
+            gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
+            break;
 
-      case PacketType::CreateRegiment:
-      case PacketType::MoveRegiment:
-        assert(false);
-        break;
+          case PacketType::MoveRegiment:
+            Regiment regiment;
+            regiment.ownerID = packet.moveRegiment.playerID;
+            regiment.position = packet.moveRegiment.regimentDestination;
+            regiment.count = 1;
+
+            gGameModel().regiments().insert(regiment);
+            break;
+
+          case PacketType::CreateRegiment:
+            assert(false);
+            break;
+          }
+        }
+
+        // Update model
+        gf::Time time = clock.restart();
+        gGameModel().update(time);
       }
     }).detach();
   }

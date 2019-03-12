@@ -9,33 +9,17 @@
 #include <gf/Vector.h>
 
 #include "../common/Packet.h"
+#include "../common/RegimentContainer.h"
 
 #include "ClientModel.h"
 
 namespace gw {
 
-  struct Regiment {
-    int count;
-    gf::Vector2i position;
-    gf::Id ownerID;
-  };
-
-  inline bool operator<(const Regiment& lhs, const Regiment& rhs) {
-    return std::tie(lhs.position.x, lhs.position.y) < std::tie(rhs.position.x, rhs.position.y);
-  }
-
-  inline bool operator<(gf::Vector2i lhs, const Regiment& rhs) {
-    return std::tie(lhs.x, lhs.y) < std::tie(rhs.position.x, rhs.position.y);
-  }
-
-  inline bool operator<(const Regiment& lhs, gf::Vector2i rhs) {
-    return std::tie(lhs.position.x, lhs.position.y) < std::tie(rhs.x, rhs.y);
-  }
-
   class ClientArmy : public gf::Entity {
   public:
     ClientArmy(gf::ResourceManager& resources, ClientModel &clientModel);
 
+    [[deprecated("Move the regiment container to ClientModel")]]
     const Regiment* getRegiment(gf::Vector2i position) const;
     void createRegiment(int count, gf::Vector2i position, gf::Id ownerID);
 
@@ -45,7 +29,7 @@ namespace gw {
     gf::Font& m_font;
     ClientModel &m_clientModel;
 
-    std::set<Regiment, std::less<>> m_army;
+    RegimentContainer m_army;
   };
 
 }

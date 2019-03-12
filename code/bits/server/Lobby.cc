@@ -80,9 +80,17 @@ namespace gw {
       gf::Id gameID = generateId();
 
       // Create new Session game
-      m_games.emplace(std::piecewise_construct,
+      bool inserted;
+      decltype(m_games)::iterator it;
+
+      std::tie(it, inserted) = m_games.emplace(std::piecewise_construct,
         std::forward_as_tuple(gameID),
         std::forward_as_tuple(gameID, m_players));
+
+      assert(inserted);
+
+      // Launch game
+      it->second.launchGame();
     }
   }
 
