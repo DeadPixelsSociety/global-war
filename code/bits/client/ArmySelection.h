@@ -5,15 +5,13 @@
 #include <gf/RenderTarget.h>
 #include <gf/Vector.h>
 
-#include "ClientArmy.h"
-#include "ClientMap.h"
-#include "ClientModel.h"
+#include "GameState.h"
 
 namespace gw {
 
   class ArmySelection {
   public:
-    ArmySelection(ClientMap& map, ClientArmy& army, ClientModel& clientModel, const gf::RenderTarget& target, const gf::View& view);
+    ArmySelection(GameState &gameState, const gf::RenderTarget& target, const gf::View& view);
 
     void processEvent(const gf::Event& event);
 
@@ -26,15 +24,13 @@ namespace gw {
 
     State m_state = State::WaitingRegiment;
 
-    const ClientMap *m_map;
-    const ClientArmy *m_army;
-    ClientModel &m_clientModel;
     const gf::RenderTarget *m_target;
     const gf::View *m_view;
 
     gf::Vector2i m_source;
     gf::Vector2i m_destination;
 
+    GameState &m_gameState;
   };
 
 }

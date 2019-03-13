@@ -6,12 +6,12 @@
 #include <gf/ViewContainer.h>
 #include <gf/Window.h>
 
-#include "ClientModel.h"
+#include "GameState.h"
 
 namespace gw {
   class Stage {
   public:
-    Stage(gf::Window &window, gf::RenderWindow &renderer, ClientModel &clientModel);
+    Stage(gf::Window &window, gf::RenderWindow &renderer, GameState &gameState);
 
     virtual void loop() = 0;
     virtual void processPackets() = 0;
@@ -19,7 +19,7 @@ namespace gw {
   protected:
     gf::Window &m_window;
     gf::RenderWindow &m_renderer;
-    ClientModel &m_clientModel;
+    GameState &m_gameState;
 
     gf::ActionContainer m_actions;
     gf::Action m_closeWindowAction;

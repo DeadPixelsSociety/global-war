@@ -3,17 +3,17 @@
 
 #include <gf/Entity.h>
 
-#include "ClientModel.h"
+#include "GameState.h"
 
 namespace gw {
   class HUD: public gf::Entity {
   public:
-    HUD(ClientModel &clientModel);
+    HUD(GameState &gameState);
 
     virtual void render(gf::RenderTarget& target, const gf::RenderStates& states) override;
 
   private:
-    ClientModel &m_clientModel;
+    GameState& m_gameState;
   };
 }
 

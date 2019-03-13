@@ -5,13 +5,14 @@
 #include <gf/ResourceManager.h>
 #include <gf/Views.h>
 
+#include "GameState.h"
 #include "Stage.h"
 #include "WaitScreen.h"
 
 namespace gw {
   class LobbyStage : public Stage {
   public:
-    LobbyStage(gf::Window &window, gf::RenderWindow &renderer, ClientModel &clientModel, gf::ResourceManager &resources);
+    LobbyStage(gf::Window &window, gf::RenderWindow &renderer, GameState &gameState);
 
     void loop() override;
     void processPackets() override;

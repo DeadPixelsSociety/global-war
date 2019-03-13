@@ -6,8 +6,8 @@
 #include <gf/VectorOps.h>
 
 namespace gw {
-  HUD::HUD(ClientModel &clientModel) :
-  m_clientModel(clientModel) {
+  HUD::HUD(GameState &gameState) :
+  m_gameState(gameState) {
 
   }
 
@@ -19,7 +19,7 @@ namespace gw {
     gf::RectangleShape rectangle(rectangleSize);
     rectangle.setColor(gf::Color::Opaque(0.0f));
     rectangle.setPosition({outlineThickness, outlineThickness});
-    rectangle.setOutlineColor(m_clientModel.getPlayerColor());
+    rectangle.setOutlineColor(m_gameState.getPlayerColor());
     rectangle.setOutlineThickness(outlineThickness);
     target.draw(rectangle, states);
   }

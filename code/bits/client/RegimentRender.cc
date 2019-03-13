@@ -1,4 +1,4 @@
-#include "ClientArmy.h"
+#include "RegimentRender.h"
 
 #include <gf/Color.h>
 #include <gf/Coordinates.h>
@@ -8,28 +8,21 @@
 
 #include "../common/Hexagon.h"
 
+#include "Singletons.h"
+
 namespace gw {
 
-  ClientArmy::ClientArmy(gf::ResourceManager& resources, ClientModel &clientModel)
-  : m_font(resources.getFont("DejaVuSans.ttf"))
-  , m_clientModel(clientModel)
+  RegimentRender::RegimentRender(GameState &gameState)
+  : m_font(gResourceManager().getFont("DejaVuSans.ttf"))
+  , m_gameState(gameState)
   {
   }
 
-  const Regiment* ClientArmy::getRegiment(gf::Vector2i position) const {
-    return m_data.getRegiment(position);
-  }
-
-
-  void ClientArmy::createRegiment(int count, gf::Vector2i position, gf::Id ownerID) {
-    m_data.regiments.insert({ ownerID, count, position });
-  }
-
-  void ClientArmy::render(gf::RenderTarget& target, const gf::RenderStates& states) {
-    for (auto& regiment : m_data.regiments) {
+  void RegimentRender::render(gf::RenderTarget& target, const gf::RenderStates& states) {
+    for (auto& regiment : m_gameState.data.regiments) {
       auto position = Hexagon::positionToCoordinates(regiment.position);
 
-      gf::Color4f colorLight = m_clientModel.getPlayerColor(regiment.ownerID);
+      gf::Color4f colorLight = m_gameState.getPlayerColor(regiment.ownerID);
       gf::Color4f colorMedium = gf::Color::darker(colorLight);
       gf::Color4f colorDark = gf::Color::darker(colorMedium);
 

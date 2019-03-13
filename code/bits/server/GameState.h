@@ -8,6 +8,8 @@
 namespace gw {
 
   struct GameState: public gf::Model {
+    GameState();
+
     void update(gf::Time time) override;
 
     Data data;

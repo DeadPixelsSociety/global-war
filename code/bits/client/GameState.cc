@@ -1,12 +1,16 @@
-#include "ClientModel.h"
+#include "GameState.h"
 
 #include <cassert>
 
+#include <gf/Color.h>
 #include <gf/Log.h>
 
+#include "Singletons.h"
+
 namespace gw {
-  ClientModel::ClientModel(char *hostname, char* port)
-  : threadCom(hostname, port, comQueue) {
+  GameState::GameState(char *hostname, char* port)
+  : threadCom(hostname, port, comQueue)
+  , data(gResourceManager().getAbsolutePath("map.txt")) {
     // Retreive the player ID
     Packet packet;
     assert(threadCom.receivePacket(packet));
@@ -16,7 +20,7 @@ namespace gw {
     gf::Log::info("Player ID: %lx\n", currentPlayerID);
   }
 
-  void ClientModel::quickMacth() {
+  void GameState::quickMacth() {
     Packet packet;
     packet.type = PacketType::QuickMatch;
     packet.quickMatch.playerID = currentPlayerID;
@@ -24,11 +28,11 @@ namespace gw {
     assert(threadCom.sendPacket(packet));
   }
 
-  gf::Color4f ClientModel::getPlayerColor() {
+  gf::Color4f GameState::getPlayerColor() {
     return getPlayerColor(currentPlayerID);
   }
 
-  gf::Color4f ClientModel::getPlayerColor(gf::Id playerID) {
+  gf::Color4f GameState::getPlayerColor(gf::Id playerID) {
     if (allPlayerID[0] == playerID) {
       return gf::Color::Green;
     }

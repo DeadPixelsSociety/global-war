@@ -6,20 +6,20 @@
 #include <gf/Event.h>
 
 namespace gw {
-  GameStage::GameStage(gf::Window &window, gf::RenderWindow &renderer, ClientModel &clientModel, gf::ResourceManager &resources)
-  : Stage(window, renderer, clientModel)
+  GameStage::GameStage(gf::Window &window, gf::RenderWindow &renderer, GameState &gameState)
+  : Stage(window, renderer, gameState)
   , m_adaptor(m_renderer, m_mainView)
-  , m_map(resources.getAbsolutePath("map.txt"))
-  , m_army(resources, clientModel)
-  , m_hud(clientModel)
-  , m_armySelection(m_map, m_army, clientModel, m_renderer, m_mainView) {
+  , m_mapRender(gameState)
+  , m_regimentsRender(gameState)
+  , m_hud(gameState)
+  , m_armySelection(m_gameState, m_renderer, m_mainView) {
     m_views.addView(m_mainView);
     m_views.addView(m_hudView);
     m_views.setInitialScreenSize(InitialScreenSize);
 
     // m_entities.addEntity(m_waitScreen);
-    m_mainEntities.addEntity(m_map);
-    m_mainEntities.addEntity(m_army);
+    m_mainEntities.addEntity(m_mapRender);
+    m_mainEntities.addEntity(m_regimentsRender);
 
     m_hudEntities.addEntity(m_hud);
   }
@@ -71,7 +71,7 @@ namespace gw {
 
   void GameStage::processPackets() {
     Packet packet;
-    while (m_clientModel.comQueue.poll(packet)) {
+    while (m_gameState.comQueue.poll(packet)) {
       switch (packet.type) {
         case PacketType::Ping:
         case PacketType::NewPlayer:
@@ -86,7 +86,7 @@ namespace gw {
             packet.createRegiment.count, packet.createRegiment.position.x,
             packet.createRegiment.position.y, packet.createRegiment.ownerID);
 
-          m_army.createRegiment(packet.createRegiment.count, packet.createRegiment.position, packet.createRegiment.ownerID);
+          m_gameState.data.regiments.insert({packet.createRegiment.ownerID, packet.createRegiment.count, packet.createRegiment.position});
           break;
       }
     }

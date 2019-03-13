@@ -5,10 +5,12 @@
 #include <gf/Log.h>
 #include <gf/Event.h>
 
+#include "Singletons.h"
+
 namespace gw {
-  LobbyStage::LobbyStage(gf::Window &window, gf::RenderWindow &renderer, ClientModel &clientModel, gf::ResourceManager &resources)
-  : Stage(window, renderer, clientModel)
-  , m_waitScreen(resources.getFont("DejaVuSans.ttf"))
+  LobbyStage::LobbyStage(gf::Window &window, gf::RenderWindow &renderer, GameState &gameState)
+  : Stage(window, renderer, gameState)
+  , m_waitScreen(gResourceManager().getFont("DejaVuSans.ttf"))
   , m_gameFound(false) {
     m_views.addView(m_hudView);
     m_views.setInitialScreenSize(InitialScreenSize);
@@ -18,7 +20,7 @@ namespace gw {
 
   void LobbyStage::loop() {
     // Register for a quick match
-    m_clientModel.quickMacth();
+    m_gameState.quickMacth();
     m_gameFound = false;
 
     m_renderer.clear(gf::Color::White);
@@ -60,7 +62,7 @@ namespace gw {
 
   void LobbyStage::processPackets() {
     Packet packet;
-    while (m_clientModel.comQueue.poll(packet)) {
+    while (m_gameState.comQueue.poll(packet)) {
       switch (packet.type) {
         case PacketType::Ping:
         case PacketType::NewPlayer:
@@ -79,7 +81,7 @@ namespace gw {
 
           // Add playerIDs to the client model
           auto it = packet.joinGame.playersID.begin();
-          m_clientModel.allPlayerID.insert(m_clientModel.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
+          m_gameState.allPlayerID.insert(m_gameState.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
 
           m_gameFound = true;
           break;

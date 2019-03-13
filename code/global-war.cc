@@ -2,9 +2,10 @@
 
 #include <gf/ResourceManager.h>
 
-#include "bits/client/ClientModel.h"
 #include "bits/client/GameStage.h"
+#include "bits/client/GameState.h"
 #include "bits/client/LobbyStage.h"
+#include "bits/client/Singletons.h"
 
 #include "config.h"
 
@@ -15,6 +16,10 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
+    // Assets manager
+    gf::SingletonStorage<gf::ResourceManager> storageForResourceManager(gw::gResourceManager);
+    gw::gResourceManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
+
     // Init screen
     gf::Window window("Global War", gw::InitialScreenSize);
     window.setVerticalSyncEnabled(true);
@@ -22,20 +27,16 @@ int main(int argc, char *argv[]) {
     gf::RenderWindow renderer(window);
 
     // Define the model
-    gw::ClientModel clientModel(argv[1], argv[2]);
+    gw::GameState gameState(argv[1], argv[2]);
 
     // Start the network
-    clientModel.threadCom.start();
-
-    // Assets manager
-    gf::ResourceManager resources;
-    resources.addSearchDir(GLOBAL_WAR_DATA_DIR);
+    gameState.threadCom.start();
 
     // Create stages
-    gw::LobbyStage lobby(window, renderer, clientModel, resources);
+    gw::LobbyStage lobby(window, renderer, gameState);
     lobby.loop();
 
-    gw::GameStage game(window, renderer, clientModel, resources);
+    gw::GameStage game(window, renderer, gameState);
     game.loop();
 
   } catch (std::exception& e) {

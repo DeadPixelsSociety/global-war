@@ -8,18 +8,19 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 add_executable(global-war
   global-war.cc
   bits/client/ArmySelection.cc
-  bits/client/ClientArmy.cc
-  bits/client/ClientMap.cc
-  bits/client/ClientModel.cc
   bits/client/GameStage.cc
+  bits/client/GameState.cc
   bits/client/HUD.cc
   bits/client/LobbyStage.cc
+  bits/client/MapRender.cc
+  bits/client/RegimentRender.cc
+  bits/client/Singletons.cc
   bits/client/Stage.cc
   bits/client/WaitScreen.cc
 
   bits/common/Data.cc
   bits/common/Hexagon.cc
-  bits/common/MapModel.cc
+  bits/common/MapData.cc
   bits/common/Sockets.cc
   bits/common/ThreadCom.cc
 )
@@ -50,8 +51,11 @@ add_executable(global-war-server
   bits/server/GameState.cc
   bits/server/Lobby.cc
   bits/server/Player.cc
+  bits/server/Singletons.cc
 
   bits/common/Data.cc
+  bits/common/Hexagon.cc
+  bits/common/MapData.cc
   bits/common/Sockets.cc
   bits/common/ThreadCom.cc
 )

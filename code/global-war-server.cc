@@ -3,11 +3,18 @@
 #include <gf/Random.h>
 
 #include "bits/server/Lobby.h"
+#include "bits/server/Singletons.h"
+
+#include "config.h"
 
 using boost::asio::ip::tcp;
 
 int main(int argc, char *argv[]) {
   gf::Random random;
+
+  // Init singleton
+  gf::SingletonStorage<gf::ResourceManager> storageForResourceManager(gw::gResourceManager);
+  gw::gResourceManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
 
   try {
     if (argc != 2) {

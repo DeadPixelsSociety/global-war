@@ -1,4 +1,4 @@
-#include "MapModel.h"
+#include "MapData.h"
 
 #include <cassert>
 
@@ -13,7 +13,7 @@
 
 namespace gw {
 
-  MapModel::MapModel(const gf::Path& path)
+  MapData::MapData(const gf::Path& path)
   : m_map({ Width, Height }, static_cast<int>(TileType::Sea))
   {
     std::ifstream file(path.string());
@@ -42,8 +42,16 @@ namespace gw {
 
   }
 
-  gf::Vector2i MapModel::getPosition(gf::Vector2f coords) const {
-    return Hexagon::coordinatesToPosition(coords);
+  gf::Vector2i MapData::getTileCoordinate(gf::Vector2f screenCoordinate) const {
+    return Hexagon::coordinatesToPosition(screenCoordinate);
+  }
+
+  gf::PositionRange<int> MapData::getPositionRange() const {
+    return m_map.getPositionRange();
+  }
+
+  int MapData::getTile(gf::Vector2i position) const {
+    return m_map(position);
   }
 
 }

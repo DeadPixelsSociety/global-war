@@ -2,6 +2,11 @@
 
 namespace gw {
 
+  Data::Data(const gf::Path& path)
+  : map(path) {
+
+  }
+
   const Regiment* Data::getRegiment(gf::Vector2i position) const {
     auto it = regiments.find(position);
 

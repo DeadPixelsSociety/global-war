@@ -7,16 +7,16 @@
 #include <gf/Views.h>
 
 #include "ArmySelection.h"
-#include "ClientArmy.h"
-#include "ClientMap.h"
-#include "ClientModel.h"
+#include "GameState.h"
 #include "HUD.h"
+#include "MapRender.h"
+#include "RegimentRender.h"
 #include "Stage.h"
 
 namespace gw {
   class GameStage : public Stage {
   public:
-    GameStage(gf::Window &window, gf::RenderWindow &renderer, ClientModel &clientModel, gf::ResourceManager &resources);
+    GameStage(gf::Window &window, gf::RenderWindow &renderer, GameState &gameState);
 
     void loop() override;
     void processPackets() override;
@@ -27,8 +27,8 @@ namespace gw {
     gf::ZoomingViewAdaptor m_adaptor;
 
     gf::EntityContainer m_mainEntities;
-    ClientMap m_map;
-    ClientArmy m_army;
+    MapRender m_mapRender;
+    RegimentRender m_regimentsRender;
     gf::EntityContainer m_hudEntities;
     HUD m_hud;
 
