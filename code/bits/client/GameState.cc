@@ -13,19 +13,25 @@ namespace gw {
   , data(gResourceManager().getAbsolutePath("map.txt")) {
     // Retreive the player ID
     Packet packet;
-    assert(threadCom.receivePacket(packet));
+
+    if (!threadCom.receivePacket(packet)) {
+      assert(false);
+    }
+
     assert(packet.type == PacketType::NewPlayer);
 
     currentPlayerID = packet.newPlayer.playerID;
     gf::Log::info("Player ID: %lx\n", currentPlayerID);
   }
 
-  void GameState::quickMacth() {
+  void GameState::quickMatch() {
     Packet packet;
     packet.type = PacketType::QuickMatch;
     packet.quickMatch.playerID = currentPlayerID;
 
-    assert(threadCom.sendPacket(packet));
+    if (!threadCom.sendPacket(packet)) {
+      assert(false);
+    }
   }
 
   gf::Color4f GameState::getPlayerColor() {

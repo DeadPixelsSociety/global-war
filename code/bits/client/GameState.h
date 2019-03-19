@@ -15,7 +15,7 @@ namespace gw {
     // Network
     gf::Queue<Packet> comQueue;
     ThreadCom threadCom;
-    void quickMacth();
+    void quickMatch();
 
     // Players management
     gf::Id currentPlayerID;

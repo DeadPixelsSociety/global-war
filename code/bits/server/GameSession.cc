@@ -88,6 +88,7 @@ namespace gw {
             break;
 
           case PacketType::MoveRegiment:
+          {
             Regiment regiment;
             regiment.ownerID = packet.moveRegiment.playerID;
             regiment.position = packet.moveRegiment.regimentDestination;
@@ -95,6 +96,7 @@ namespace gw {
 
             m_gameState.data.regiments.insert(regiment);
             break;
+          }
 
           case PacketType::CreateRegiment:
             assert(false);

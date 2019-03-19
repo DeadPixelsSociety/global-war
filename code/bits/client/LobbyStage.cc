@@ -20,7 +20,7 @@ namespace gw {
 
   void LobbyStage::loop() {
     // Register for a quick match
-    m_gameState.quickMacth();
+    m_gameState.quickMatch();
     m_gameFound = false;
 
     m_renderer.clear(gf::Color::White);
