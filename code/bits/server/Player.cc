@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <thread>
+
 namespace gw {
   Player::Player(SocketTcp socket, gf::Queue<Packet> &queue, gf::Id playerID)
   : m_com(std::move(socket), queue)
