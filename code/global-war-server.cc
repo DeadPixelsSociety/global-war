@@ -13,8 +13,8 @@ int main(int argc, char *argv[]) {
   gf::Random random;
 
   // Init singleton
-  gf::SingletonStorage<gf::ResourceManager> storageForResourceManager(gw::gResourceManager);
-  gw::gResourceManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
+  gf::SingletonStorage<gf::AssetManager> storageForResourceManager(gw::gAssetManager);
+  gw::gAssetManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
 
   try {
     if (argc != 2) {

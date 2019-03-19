@@ -16,15 +16,16 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    // Assets manager
-    gf::SingletonStorage<gf::ResourceManager> storageForResourceManager(gw::gResourceManager);
-    gw::gResourceManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
 
     // Init screen
     gf::Window window("Global War", gw::InitialScreenSize);
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
     gf::RenderWindow renderer(window);
+
+    // Assets manager
+    gf::SingletonStorage<gf::ResourceManager> storageForResourceManager(gw::gResourceManager);
+    gw::gResourceManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
 
     // Define the model
     gw::GameState gameState(argv[1], argv[2]);

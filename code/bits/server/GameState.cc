@@ -9,7 +9,7 @@
 namespace gw {
 
   GameState::GameState()
-  : data(gResourceManager().getAbsolutePath("map.txt")){
+  : data(gAssetManager().getAbsolutePath("map.txt")){
 
   }
 
