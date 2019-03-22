@@ -3,8 +3,15 @@
 #include <thread>
 
 #include <gf/Clock.h>
+#include <gf/Sleep.h>
 
 namespace gw {
+  namespace {
+
+    constexpr gf::Time TickTime = gf::seconds(1 / 120.0f);
+
+  }
+
   GameSession::GameSession(gf::Id gameID, std::map<gf::Id, Player> &players)
   : m_gameID(gameID) {
     for (auto &player: players) {
@@ -108,6 +115,11 @@ namespace gw {
           sendAtPlayers(packet);
         }
         m_gameState.pendingPackets.clear();
+
+        if (time < TickTime) {
+          gf::sleep(TickTime - time);
+        }
+
       }
     }).detach();
   }
