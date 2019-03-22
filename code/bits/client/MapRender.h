@@ -4,6 +4,7 @@
 #include <gf/Array2D.h>
 #include <gf/Entity.h>
 #include <gf/Path.h>
+#include <gf/Texture.h>
 
 #include "GameState.h"
 
@@ -17,6 +18,7 @@ namespace gw {
 
   private:
     GameState &m_gameState;
+    const gf::Texture& m_texture;
   };
 
 }
