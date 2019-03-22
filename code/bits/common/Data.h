@@ -1,7 +1,7 @@
 #ifndef BITS_COMMON_DATA_H
 #define BITS_COMMON_DATA_H
 
-#include <set>
+#include <vector>
 
 #include <gf/Vector.h>
 
@@ -15,9 +15,11 @@ namespace gw {
 
     MapData map;
 
-    std::set<Regiment, std::less<>> regiments;
+    std::vector<Regiment> regiments;
 
-    const Regiment* getRegiment(gf::Vector2i position) const;
+    Regiment* getRegiment(gf::Vector2i position);
+    void moveUnit(gf::Vector2i origin, gf::Vector2i destination);
+    void cleanUpRegiments();
   };
 
 }

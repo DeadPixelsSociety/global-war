@@ -48,6 +48,7 @@ namespace gw {
       }
 
       gf::Time time = clock.restart();
+      m_gameState.update(time);
       m_mainEntities.update(time);
       m_hudEntities.update(time);
 
@@ -73,7 +74,6 @@ namespace gw {
     Packet packet;
     while (m_gameState.comQueue.poll(packet)) {
       switch (packet.type) {
-        case PacketType::Ping:
         case PacketType::NewPlayer:
         case PacketType::QuickMatch:
         case PacketType::MoveRegiment:
@@ -86,7 +86,15 @@ namespace gw {
             packet.createRegiment.count, packet.createRegiment.position.x,
             packet.createRegiment.position.y, packet.createRegiment.ownerID);
 
-          m_gameState.data.regiments.insert({packet.createRegiment.ownerID, packet.createRegiment.count, packet.createRegiment.position});
+          m_gameState.data.regiments.push_back({packet.createRegiment.ownerID, packet.createRegiment.count, packet.createRegiment.position});
+          break;
+
+        case PacketType::MoveUnit:
+          gf::Log::info("Move unit form {%d,%d} to {%d,%d}\n",
+            packet.moveUnit.origin.x, packet.moveUnit.origin.y,
+            packet.moveUnit.destination.x, packet.moveUnit.destination.y);
+
+          m_gameState.data.moveUnit(packet.moveUnit.origin, packet.moveUnit.destination);
           break;
       }
     }

@@ -13,16 +13,12 @@ namespace gw {
   static constexpr int MaxPlayers = 8;
 
   enum class PacketType : uint16_t {
-    Ping,
     NewPlayer,
     QuickMatch,
     JoinGame,
     CreateRegiment,
     MoveRegiment,
-  };
-
-  struct PacketPing {
-    uint16_t sequence;
+    MoveUnit,
   };
 
   static constexpr gf::Id InvalidPlayerID = gf::InvalidId;
@@ -52,17 +48,22 @@ namespace gw {
     gf::Vector<int32_t, 2> regimentDestination;
   };
 
+  struct MoveUnit {
+    gf::Vector<int32_t, 2> origin;
+    gf::Vector<int32_t, 2> destination;
+  };
+
 
   struct Packet {
     PacketType type;
 
     union {
-      PacketPing ping;
       NewPlayer newPlayer;
       QuickMatch quickMatch;
       JoinGame joinGame;
       CreateRegiment createRegiment;
       MoveRegiment moveRegiment;
+      MoveUnit moveUnit;
     };
   };
 
@@ -71,10 +72,6 @@ namespace gw {
     ar | packet.type;
 
     switch (packet.type) {
-      case PacketType::Ping:
-        ar | packet.ping.sequence;
-        break;
-
       case PacketType::NewPlayer:
         ar | packet.newPlayer.playerID;
         break;
@@ -99,6 +96,11 @@ namespace gw {
         ar | packet.moveRegiment.playerID;
         ar | packet.moveRegiment.regimentOrigin;
         ar | packet.moveRegiment.regimentDestination;
+        break;
+
+      case PacketType::MoveUnit:
+        ar | packet.moveUnit.origin;
+        ar | packet.moveUnit.destination;
         break;
     }
 

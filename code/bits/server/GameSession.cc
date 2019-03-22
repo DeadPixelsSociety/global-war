@@ -48,7 +48,7 @@ namespace gw {
       regiment.ownerID = player.getID();
       regiment.position = { 0, static_cast<int>(i) };
       regiment.count = 40;
-      m_gameState.data.regiments.insert(regiment);
+      m_gameState.data.regiments.push_back(regiment);
 
       // TODO: Remove this packet to move this an the first init of GameModel
       packet.createRegiment.count = regiment.count;
@@ -71,10 +71,6 @@ namespace gw {
         Packet packet;
         while (m_queue.poll(packet)) {
           switch (packet.type) {
-          case PacketType::Ping:
-            gf::Log::info("Ping: %d\n", packet.ping.sequence);
-            break;
-
           case PacketType::NewPlayer:
             gf::Log::info("Player ID: %lx\n", packet.newPlayer.playerID);
             break;
@@ -89,16 +85,15 @@ namespace gw {
 
           case PacketType::MoveRegiment:
           {
-            Regiment regiment;
-            regiment.ownerID = packet.moveRegiment.playerID;
-            regiment.position = packet.moveRegiment.regimentDestination;
-            regiment.count = 1;
+            // TODO: check if the position is valid
 
-            m_gameState.data.regiments.insert(regiment);
+            // Create a move order
+            m_gameState.moveOrders.push_back({ packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination, gf::Time::zero() });
             break;
           }
 
           case PacketType::CreateRegiment:
+          case PacketType::MoveUnit:
             assert(false);
             break;
           }
@@ -107,7 +102,19 @@ namespace gw {
         // Update model
         gf::Time time = clock.restart();
         m_gameState.update(time);
+
+        // Send all packets
+        for (auto &packet: m_gameState.pendingPackets) {
+          sendAtPlayers(packet);
+        }
+        m_gameState.pendingPackets.clear();
       }
     }).detach();
+  }
+
+  void GameSession::sendAtPlayers(Packet &packet) {
+    for (Player *p: m_players) {
+      p->sendPacket(packet);
+    }
   }
 }

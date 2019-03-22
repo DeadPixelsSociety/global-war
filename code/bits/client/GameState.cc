@@ -24,6 +24,10 @@ namespace gw {
     gf::Log::info("Player ID: %lx\n", currentPlayerID);
   }
 
+  void GameState::update(gf::Time time) {
+    data.cleanUpRegiments();
+  }
+
   void GameState::quickMatch() {
     Packet packet;
     packet.type = PacketType::QuickMatch;

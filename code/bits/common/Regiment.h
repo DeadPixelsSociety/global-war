@@ -15,18 +15,6 @@ namespace gw {
     gf::Vector2i position;
   };
 
-  inline bool operator<(const Regiment& lhs, const Regiment& rhs) {
-    return std::tie(lhs.position.x, lhs.position.y) < std::tie(rhs.position.x, rhs.position.y);
-  }
-
-  inline bool operator<(gf::Vector2i lhs, const Regiment& rhs) {
-    return std::tie(lhs.x, lhs.y) < std::tie(rhs.position.x, rhs.position.y);
-  }
-
-  inline bool operator<(const Regiment& lhs, gf::Vector2i rhs) {
-    return std::tie(lhs.position.x, lhs.position.y) < std::tie(rhs.x, rhs.y);
-  }
-
 }
 
 #endif // BITS_COMMON_REGIMENT_CONTAINER_H

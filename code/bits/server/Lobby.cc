@@ -43,10 +43,6 @@ namespace gw {
     m_comQueue.wait(packet);
 
     switch (packet.type) {
-    case PacketType::Ping:
-      gf::Log::info("Ping: %d\n", packet.ping.sequence);
-      break;
-
     case PacketType::NewPlayer:
       gf::Log::info("Player ID: %lx\n", packet.newPlayer.playerID);
       break;
@@ -67,6 +63,7 @@ namespace gw {
 
     case PacketType::CreateRegiment:
     case PacketType::MoveRegiment:
+    case PacketType::MoveUnit:
       assert(false);
       break;
     }

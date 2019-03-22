@@ -64,11 +64,11 @@ namespace gw {
     Packet packet;
     while (m_gameState.comQueue.poll(packet)) {
       switch (packet.type) {
-        case PacketType::Ping:
         case PacketType::NewPlayer:
         case PacketType::QuickMatch:
         case PacketType::CreateRegiment:
         case PacketType::MoveRegiment:
+        case PacketType::MoveUnit:
           gf::Log::error("Receive unexpected packet in lobby\n");
           break;
 

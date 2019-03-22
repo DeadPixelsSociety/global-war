@@ -18,6 +18,8 @@ namespace gw {
 
     void launchGame();
 
+    void sendAtPlayers(Packet &packet);
+
   private:
     gf::Id m_gameID;
     gf::Queue<Packet> m_queue;
