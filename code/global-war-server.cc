@@ -10,9 +10,9 @@
 using boost::asio::ip::tcp;
 
 int main(int argc, char *argv[]) {
-  gf::Random random;
-
   // Init singleton
+  gf::SingletonStorage<gf::Random> storageForRandom(gw::gRandom);
+
   gf::SingletonStorage<gf::AssetManager> storageForResourceManager(gw::gAssetManager);
   gw::gAssetManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
 
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
       std::cerr << "Usage: global-war-server <port>\n";
       return 1;
     }
-    gw::Lobby lobby(random, std::atoi(argv[1]));
+    gw::Lobby lobby(std::atoi(argv[1]));
 
     for (;;) {
       lobby.processPacket();

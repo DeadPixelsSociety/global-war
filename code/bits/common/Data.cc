@@ -36,6 +36,13 @@ namespace gw {
     ++destinationRegiment->count;
   }
 
+  void Data::killUnit(gf::Vector2i position) {
+    Regiment* regiment = getRegiment(position);
+    assert(regiment != nullptr);
+
+    --regiment->count;
+  }
+
   void Data::cleanUpRegiments() {
     // Clear all empty regiment
     regiments.erase(std::remove_if(regiments.begin(), regiments.end(), [this](const Regiment &regiment){

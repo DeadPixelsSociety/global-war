@@ -19,6 +19,7 @@ namespace gw {
 
     Regiment* getRegiment(gf::Vector2i position);
     void moveUnit(gf::Vector2i origin, gf::Vector2i destination);
+    void killUnit(gf::Vector2i position);
     void cleanUpRegiments();
   };
 

@@ -90,11 +90,19 @@ namespace gw {
           break;
 
         case PacketType::MoveUnit:
-          gf::Log::info("Move unit form {%d,%d} to {%d,%d}\n",
+          gf::Log::info("Move unit from {%d,%d} to {%d,%d}\n",
             packet.moveUnit.origin.x, packet.moveUnit.origin.y,
             packet.moveUnit.destination.x, packet.moveUnit.destination.y);
 
           m_gameState.data.moveUnit(packet.moveUnit.origin, packet.moveUnit.destination);
+          break;
+
+        case PacketType::KillUnit:
+          gf::Log::info("Kill unit at {%d,%d}\n",
+            packet.killUnit.position.x, packet.killUnit.position.y);
+
+          m_gameState.data.killUnit(packet.killUnit.position);
+
           break;
       }
     }

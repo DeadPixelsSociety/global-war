@@ -108,6 +108,7 @@ namespace gw {
 
           case PacketType::CreateRegiment:
           case PacketType::MoveUnit:
+          case PacketType::KillUnit:
             assert(false);
             break;
           }

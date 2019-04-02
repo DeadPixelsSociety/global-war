@@ -17,7 +17,7 @@
 namespace gw {
   class Lobby {
   public:
-    Lobby(gf::Random &random, std::uint16_t port);
+    Lobby(std::uint16_t port);
 
     void addNewPlayer(SocketTcp socket);
     void processPacket();
@@ -27,7 +27,6 @@ namespace gw {
     void createNewGame();
 
   private:
-    gf::Random& m_random;
     ListenerTcp m_listener;
 
     gf::Queue<Packet> m_comQueue;

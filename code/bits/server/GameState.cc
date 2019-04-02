@@ -9,7 +9,7 @@
 namespace gw {
 
   namespace {
-    constexpr gf::Time MoveDelay = gf::seconds(2.0f);
+    constexpr gf::Time MoveDelay = gf::seconds(1.0f);
   }
 
   GameState::GameState()
@@ -55,7 +55,20 @@ namespace gw {
             moveOrder.origin.x, moveOrder.origin.y,
             moveOrder.destination.x, moveOrder.destination.y);
 
-          // TODO: handle attack
+          // Handle attack
+          Packet packet;
+          packet.type = PacketType::KillUnit;
+
+          if (gRandom().computeBernoulli(0.5f)) {
+            --originRegiment->count;
+            packet.killUnit.position = originRegiment->position;
+          } else {
+            --destinationRegiment->count;
+            packet.killUnit.position = destinationRegiment->position;
+          }
+
+          pendingPackets.push_back(packet);
+
           continue;
         }
 

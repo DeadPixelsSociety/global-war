@@ -19,6 +19,7 @@ namespace gw {
     CreateRegiment,
     MoveRegiment,
     MoveUnit,
+    KillUnit,
   };
 
   static constexpr gf::Id InvalidPlayerID = gf::InvalidId;
@@ -53,6 +54,10 @@ namespace gw {
     gf::Vector<int32_t, 2> destination;
   };
 
+  struct KillUnit {
+    gf::Vector<int32_t, 2> position;
+  };
+
 
   struct Packet {
     PacketType type;
@@ -64,6 +69,7 @@ namespace gw {
       CreateRegiment createRegiment;
       MoveRegiment moveRegiment;
       MoveUnit moveUnit;
+      KillUnit killUnit;
     };
   };
 
@@ -101,6 +107,10 @@ namespace gw {
       case PacketType::MoveUnit:
         ar | packet.moveUnit.origin;
         ar | packet.moveUnit.destination;
+        break;
+
+      case PacketType::KillUnit:
+        ar | packet.killUnit.position;
         break;
     }
 

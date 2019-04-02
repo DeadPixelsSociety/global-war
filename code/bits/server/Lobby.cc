@@ -5,15 +5,16 @@
 #include <gf/Id.h>
 #include <gf/Log.h>
 
+#include "Singletons.h"
+
 using boost::asio::ip::tcp;
 using namespace gf::literals;
 
 namespace gw {
-  static constexpr int GameLimitPlayer = 3;
+  static constexpr int GameLimitPlayer = 2;
 
-  Lobby::Lobby(gf::Random &random, std::uint16_t port)
-  : m_random(random)
-  , m_listener(port) {
+  Lobby::Lobby(std::uint16_t port)
+  : m_listener(port) {
     m_listener.handleNewConnection([this](SocketTcp clientSocket){
       this->addNewPlayer(std::move(clientSocket));
     });
@@ -64,6 +65,7 @@ namespace gw {
     case PacketType::CreateRegiment:
     case PacketType::MoveRegiment:
     case PacketType::MoveUnit:
+    case PacketType::KillUnit:
       assert(false);
       break;
     }
@@ -95,7 +97,7 @@ namespace gw {
     // Get the ID
     uint64_t min = std::numeric_limits<uint64_t>::min();
     uint64_t max = std::numeric_limits<uint64_t>::max();
-    uint64_t number = m_random.computeUniformInteger(min, max);
+    uint64_t number = gRandom().computeUniformInteger(min, max);
 
     return number;
   }
