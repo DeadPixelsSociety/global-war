@@ -94,6 +94,13 @@ namespace gw {
           {
             // TODO: check if the position is valid
 
+            // If the order already exists
+            if (std::find_if(m_gameState.moveOrders.begin(), m_gameState.moveOrders.end(), [packet](const MoveOrder& order){
+              return packet.moveRegiment.regimentOrigin == order.origin && packet.moveRegiment.regimentDestination == order.destination;
+            }) != m_gameState.moveOrders.end()) {
+              break;
+            }
+
             // Create a move order
             m_gameState.moveOrders.push_back({ packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination, gf::Time::zero() });
             break;
