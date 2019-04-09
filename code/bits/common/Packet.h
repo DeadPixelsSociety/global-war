@@ -8,6 +8,8 @@
 #include <gf/Vector.h>
 #include <gf/VectorOps.h>
 
+#include "Regiment.h"
+
 namespace gw {
 
   static constexpr int MaxPlayers = 8;
@@ -41,6 +43,7 @@ namespace gw {
     int32_t count;
     gf::Vector<int32_t, 2> position;
     gf::Id ownerID;
+    Division division;
   };
 
   struct MoveRegiment {
@@ -96,6 +99,7 @@ namespace gw {
         ar | packet.createRegiment.count;
         ar | packet.createRegiment.position;
         ar | packet.createRegiment.ownerID;
+        ar | packet.createRegiment.division;
         break;
 
       case PacketType::MoveRegiment:

@@ -61,6 +61,7 @@ namespace gw {
       packet.createRegiment.count = regiment.count;
       packet.createRegiment.position = regiment.position;
       packet.createRegiment.ownerID = regiment.ownerID;
+      packet.createRegiment.division = Division::Horseman;
 
       // Send this regiment at all players
       for (auto p: m_players) {

@@ -26,7 +26,7 @@ namespace gw {
 
     if (destinationRegiment == nullptr) {
       --originRegiment->count;
-      regiments.push_back({ originRegiment->ownerID, 1, destination });
+      regiments.push_back({ originRegiment->ownerID, 1, destination, originRegiment->division });
 
       return;
     }

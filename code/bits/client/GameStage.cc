@@ -86,7 +86,7 @@ namespace gw {
             packet.createRegiment.count, packet.createRegiment.position.x,
             packet.createRegiment.position.y, packet.createRegiment.ownerID);
 
-          m_gameState.data.regiments.push_back({packet.createRegiment.ownerID, packet.createRegiment.count, packet.createRegiment.position});
+          m_gameState.data.regiments.push_back({packet.createRegiment.ownerID, packet.createRegiment.count, packet.createRegiment.position, packet.createRegiment.division});
           break;
 
         case PacketType::MoveUnit:
