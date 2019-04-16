@@ -26,28 +26,37 @@ namespace gw {
       gf::Color4f colorMedium = gf::Color::darker(colorLight);
       gf::Color4f colorDark = gf::Color::darker(colorMedium);
 
-      int corner = 0;
+      auto draw = [&](gf::Shape& shape) {
+        shape.setColor(colorLight);
+        shape.setOutlineColor(colorDark);
+        shape.setOutlineThickness(Hexagon::Size / 40);
+        shape.setPosition(position);
+        shape.setAnchor(gf::Anchor::Center);
+        target.draw(shape, states);
+      };
+
       switch (regiment.division) {
-      case Division::Horseman:
-        corner = 3;
-        break;
+        case Division::Horseman:
+        {
+          gf::StarShape shape(Hexagon::Size * 0.35f, Hexagon::Size * 0.5f, 8);
+          draw(shape);
+          break;
+        }
 
-      case Division::Swordsman:
-        corner = 30;
-        break;
+        case Division::Swordsman:
+        {
+          gf::RectangleShape shape({Hexagon::Size, Hexagon::Size});
+          draw(shape);
+          break;
+        }
 
-      case Division::Lancer:
-        corner = 4;
-        break;
+        case Division::Lancer:
+        {
+          gf::CircleShape shape(Hexagon::Size * 0.5f);
+          draw(shape);
+          break;
+        }
       }
-
-      gf::CircleShape shape(Hexagon::Size * 0.75f, corner);
-      shape.setColor(colorLight);
-      shape.setOutlineColor(colorDark);
-      shape.setOutlineThickness(Hexagon::Size / 40);
-      shape.setPosition(position);
-      shape.setAnchor(gf::Anchor::Center);
-      target.draw(shape, states);
 
       gf::Text text(std::to_string(regiment.count), m_font, Hexagon::Size * 0.5f);
       text.setColor(colorMedium);
