@@ -66,6 +66,7 @@ namespace gw {
       switch (packet.type) {
         case PacketType::NewPlayer:
         case PacketType::QuickMatch:
+        case PacketType::AckJoinGame:
         case PacketType::CreateRegiment:
         case PacketType::MoveRegiment:
         case PacketType::MoveUnit:

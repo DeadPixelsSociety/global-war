@@ -26,11 +26,16 @@ namespace gw {
   }
 
   void Player::sendPacket(Packet &packet) {
-    m_com.sendPacket(packet);
+    bool ok = m_com.sendPacket(packet);
+    assert(ok);
+  }
+
+  void Player::receivePacket(Packet &packet) {
+    bool ok = m_com.receivePacket(packet);
+    assert(ok);
   }
 
   void Player::initialize() {
-
     std::thread([this]() {
       m_com.start();
     }).detach();

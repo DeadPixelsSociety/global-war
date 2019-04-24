@@ -27,8 +27,13 @@ namespace gw {
   void GameStage::loop() {
     m_renderer.clear(gf::Color::White);
 
-    gf::Clock clock;
+    // Send the acknowledge to join session game
+    Packet packet;
+    packet.type = PacketType::AckJoinGame;
+    bool ok = m_gameState.threadCom.sendPacket(packet);
+    assert(ok);
 
+    gf::Clock clock;
     while (m_window.isOpen()) {
       gf::Event event;
 
@@ -78,6 +83,7 @@ namespace gw {
         case PacketType::QuickMatch:
         case PacketType::MoveRegiment:
         case PacketType::JoinGame:
+        case PacketType::AckJoinGame:
           gf::Log::error("Receive unexpected packet in lobby\n");
           break;
 

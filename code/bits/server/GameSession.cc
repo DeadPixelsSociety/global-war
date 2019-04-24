@@ -45,6 +45,14 @@ namespace gw {
       player->sendPacket(packet);
     }
 
+    // Wait the acknowledge of all players
+    for (std::size_t i = 0; i < m_players.size(); ++i) {
+      Packet packet;
+      m_queue.wait(packet);
+
+      assert(packet.type == PacketType::AckJoinGame);
+    }
+
     // Create the player's regiments
     packet.type = PacketType::CreateRegiment;
     for (std::size_t i = 0; i < m_players.size(); ++i) {
@@ -79,18 +87,6 @@ namespace gw {
         Packet packet;
         while (m_queue.poll(packet)) {
           switch (packet.type) {
-          case PacketType::NewPlayer:
-            gf::Log::info("Player ID: %lx\n", packet.newPlayer.playerID);
-            break;
-
-          case PacketType::QuickMatch:
-            gf::Log::info("Player ID: %lx\n", packet.quickMatch.playerID);
-            break;
-
-          case PacketType::JoinGame:
-            gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
-            break;
-
           case PacketType::MoveRegiment:
           {
             // TODO: check if the position is valid
@@ -107,6 +103,10 @@ namespace gw {
             break;
           }
 
+          case PacketType::NewPlayer:
+          case PacketType::QuickMatch:
+          case PacketType::JoinGame:
+          case PacketType::AckJoinGame:
           case PacketType::CreateRegiment:
           case PacketType::MoveUnit:
           case PacketType::KillUnit:

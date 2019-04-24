@@ -35,9 +35,10 @@ int main(int argc, char *argv[]) {
 
     // Create stages
     gw::LobbyStage lobby(window, renderer, gameState);
-    lobby.loop();
-
     gw::GameStage game(window, renderer, gameState);
+
+    // Start the loops
+    lobby.loop();
     game.loop();
 
   } catch (std::exception& e) {

@@ -18,6 +18,7 @@ namespace gw {
     NewPlayer,
     QuickMatch,
     JoinGame,
+    AckJoinGame,            // No struct data, just acknowledge
     CreateRegiment,
     MoveRegiment,
     MoveUnit,
@@ -93,6 +94,9 @@ namespace gw {
         ar | packet.joinGame.gameID;
         ar | packet.joinGame.nbPlayers;
         ar | packet.joinGame.playersID;
+        break;
+
+      case PacketType::AckJoinGame:
         break;
 
       case PacketType::CreateRegiment:

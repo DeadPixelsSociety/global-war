@@ -44,10 +44,6 @@ namespace gw {
     m_comQueue.wait(packet);
 
     switch (packet.type) {
-    case PacketType::NewPlayer:
-      gf::Log::info("Player ID: %lx\n", packet.newPlayer.playerID);
-      break;
-
     case PacketType::QuickMatch:
     {
       gf::Id playerID = packet.quickMatch.playerID;
@@ -58,10 +54,9 @@ namespace gw {
       break;
     }
 
+    case PacketType::NewPlayer:
     case PacketType::JoinGame:
-      gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
-      break;
-
+    case PacketType::AckJoinGame:
     case PacketType::CreateRegiment:
     case PacketType::MoveRegiment:
     case PacketType::MoveUnit:

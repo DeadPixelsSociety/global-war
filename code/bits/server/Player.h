@@ -23,6 +23,7 @@ namespace gw {
     void plays();
 
     void sendPacket(Packet &packet);
+    void receivePacket(Packet &packet);
     void initialize();
     void updateQueue(gf::Queue<Packet> *queue);
 
