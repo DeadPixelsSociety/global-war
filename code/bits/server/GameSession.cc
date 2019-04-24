@@ -60,6 +60,7 @@ namespace gw {
       regiment.ownerID = player.getID();
       regiment.position = position;
       regiment.count = 40;
+      regiment.division = division;
       m_gameState.data.regiments.push_back(regiment);
 
       // TODO: Remove this packet to move this an the first init of GameModel
@@ -67,7 +68,7 @@ namespace gw {
       packet.createRegiment.count = regiment.count;
       packet.createRegiment.position = regiment.position;
       packet.createRegiment.ownerID = regiment.ownerID;
-      packet.createRegiment.division = division;
+      packet.createRegiment.division = regiment.division;
 
       // Send this regiment at all players
       for (auto p: m_players) {

@@ -28,6 +28,8 @@ namespace gw {
   void Player::sendPacket(Packet &packet) {
     bool ok = m_com.sendPacket(packet);
     assert(ok);
+    if (!ok)
+      throw std::runtime_error("!ok");
   }
 
   void Player::receivePacket(Packet &packet) {

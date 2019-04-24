@@ -9,7 +9,10 @@
 namespace gw {
 
   namespace {
-    constexpr gf::Time MoveDelay = gf::seconds(1.0f);
+    constexpr gf::Time MoveDelay = gf::seconds(0.25f);
+    constexpr float BonusAttack = 0.65f;
+    constexpr float EqualAttack = 0.50f;
+    constexpr float MalusAttack = 0.35f;
   }
 
   GameState::GameState()
@@ -49,6 +52,7 @@ namespace gw {
         Regiment* originRegiment = data.getRegiment(moveOrder.origin);
         assert(originRegiment != nullptr);
         Regiment* destinationRegiment = data.getRegiment(moveOrder.destination);
+        assert(originRegiment != destinationRegiment);
 
         if (destinationRegiment != nullptr && originRegiment->ownerID != destinationRegiment->ownerID) {
           gf::Log::info("Attack regiment form {%d,%d} to {%d,%d}\n",
@@ -59,12 +63,60 @@ namespace gw {
           Packet packet;
           packet.type = PacketType::KillUnit;
 
-          if (gRandom().computeBernoulli(0.5f)) {
-            --originRegiment->count;
-            packet.killUnit.position = originRegiment->position;
-          } else {
+          // Compute the bonus
+          // Horseman > Swordsman
+          // Swordsman > Lancer
+          // Lancer > Horseman
+          float modifier = EqualAttack;
+          switch (originRegiment->division) {
+            case Division::Horseman:
+              switch (destinationRegiment->division) {
+                case Division::Swordsman:
+                  modifier = BonusAttack;
+                  break;
+                case Division::Lancer:
+                  modifier = MalusAttack;
+                  break;
+                default:
+                  break;
+              }
+              break;
+
+            case Division::Swordsman:
+              switch (destinationRegiment->division) {
+                case Division::Lancer:
+                  modifier = BonusAttack;
+                  break;
+                case Division::Horseman:
+                  modifier = MalusAttack;
+                  break;
+                default:
+                  break;
+              }
+              break;
+
+            case Division::Lancer:
+              switch (destinationRegiment->division) {
+                case Division::Horseman:
+                  modifier = BonusAttack;
+                  break;
+                case Division::Swordsman:
+                  modifier = MalusAttack;
+                  break;
+                default:
+                  break;
+              }
+              break;
+          }
+
+          gf::Log::debug("Modifier attack: %f\n", modifier);
+
+          if (gRandom().computeBernoulli(modifier)) {
             --destinationRegiment->count;
             packet.killUnit.position = destinationRegiment->position;
+          } else {
+            --originRegiment->count;
+            packet.killUnit.position = originRegiment->position;
           }
 
           pendingPackets.push_back(packet);
