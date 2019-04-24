@@ -54,28 +54,36 @@ namespace gw {
     }
 
     // Create the player's regiments
-    packet.type = PacketType::CreateRegiment;
-    for (std::size_t i = 0; i < m_players.size(); ++i) {
-      Player &player = *m_players[i];
-
+    auto createUnit = [&](Player &player, gf::Vector2i position, Division division) {
       // Add the new regiment to the model
       Regiment regiment;
       regiment.ownerID = player.getID();
-      regiment.position = { 0, static_cast<int>(i) };
+      regiment.position = position;
       regiment.count = 40;
       m_gameState.data.regiments.push_back(regiment);
 
       // TODO: Remove this packet to move this an the first init of GameModel
+      packet.type = PacketType::CreateRegiment;
       packet.createRegiment.count = regiment.count;
       packet.createRegiment.position = regiment.position;
       packet.createRegiment.ownerID = regiment.ownerID;
-      packet.createRegiment.division = Division::Swordsman;
+      packet.createRegiment.division = division;
 
       // Send this regiment at all players
       for (auto p: m_players) {
         p->sendPacket(packet);
       }
-    }
+    };
+
+    // Player 1
+    createUnit(*m_players[0], { 0, 0 }, Division::Lancer);
+    createUnit(*m_players[0], { 0, 1 }, Division::Swordsman);
+    createUnit(*m_players[0], { 0, 2 }, Division::Horseman);
+
+    // Player 2
+    createUnit(*m_players[1], { 1, 0 }, Division::Horseman);
+    createUnit(*m_players[1], { 1, 1 }, Division::Lancer);
+    createUnit(*m_players[1], { 1, 2 }, Division::Swordsman);
   }
 
   void GameSession::launchGame() {
