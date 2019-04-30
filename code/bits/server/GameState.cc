@@ -124,18 +124,20 @@ namespace gw {
           continue;
         }
 
-        gf::Log::info("Move unit form {%d,%d} to {%d,%d}\n",
-          moveOrder.origin.x, moveOrder.origin.y,
-          moveOrder.destination.x, moveOrder.destination.y);
-        data.moveUnit(moveOrder.origin, moveOrder.destination);
+        if (data.isValidMove(moveOrder.origin, moveOrder.destination)) {
+          gf::Log::info("Move unit form {%d,%d} to {%d,%d}\n",
+            moveOrder.origin.x, moveOrder.origin.y,
+            moveOrder.destination.x, moveOrder.destination.y);
+          data.moveUnit(moveOrder.origin, moveOrder.destination);
 
-        // Create packet
-        Packet packet;
-        packet.type = PacketType::MoveUnit;
-        packet.moveUnit.origin = moveOrder.origin;
-        packet.moveUnit.destination = moveOrder.destination;
+          // Create packet
+          Packet packet;
+          packet.type = PacketType::MoveUnit;
+          packet.moveUnit.origin = moveOrder.origin;
+          packet.moveUnit.destination = moveOrder.destination;
 
-        pendingPackets.push_back(packet);
+          pendingPackets.push_back(packet);
+        }
       }
     }
 
@@ -144,7 +146,7 @@ namespace gw {
       Regiment* regiment = data.getRegiment(moveOrder.origin);
       assert(regiment != nullptr);
 
-      return regiment->count <= 0;
+      return regiment->count <= 0 || !data.isValidMove(moveOrder.origin, moveOrder.destination);
     }), moveOrders.end());
 
     // Clear all empty regiment

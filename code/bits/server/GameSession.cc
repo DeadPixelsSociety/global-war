@@ -98,7 +98,9 @@ namespace gw {
           switch (packet.type) {
           case PacketType::MoveRegiment:
           {
-            // TODO: check if the position is valid
+            if (!m_gameState.data.isValidMove(packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination)) {
+              break;
+            }
 
             // If the order already exists
             if (std::find_if(m_gameState.moveOrders.begin(), m_gameState.moveOrders.end(), [packet](const MoveOrder& order){

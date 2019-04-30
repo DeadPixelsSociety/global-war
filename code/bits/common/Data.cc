@@ -50,4 +50,22 @@ namespace gw {
     }), regiments.end());
   }
 
+  bool Data::isValidMove(gf::Vector2i origin, gf::Vector2i destination) {
+    if (origin == destination) { // TODO: verify destination next to origin
+      return false;
+    }
+
+    // TODO: Not in sea
+
+    Regiment* destinationRegiment = getRegiment(destination);
+    Regiment* originRegiment = getRegiment(origin);
+    assert(originRegiment != nullptr);
+
+    if (destinationRegiment != nullptr && destinationRegiment->ownerID == originRegiment->ownerID && destinationRegiment->division != originRegiment->division) {
+      return false;
+    }
+
+    return true;
+  }
+
 }
