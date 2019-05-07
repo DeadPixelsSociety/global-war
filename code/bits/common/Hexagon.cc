@@ -53,6 +53,17 @@ namespace gw {
       return false;
     }
 
+    std::array<gf::Vector2i, 6> getNeighbors(gf::Vector2i position) {
+      std::array<gf::Vector2i, 6> neighbors;
+
+      int index = 0;
+      for (auto neighbor : Neighbors[position.y % 2]) {
+        neighbors[index++] = position + neighbor;
+      }
+
+      return neighbors;
+    }
+
   }
 
 }

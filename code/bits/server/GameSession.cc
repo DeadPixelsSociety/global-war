@@ -53,6 +53,9 @@ namespace gw {
       assert(packet.type == PacketType::AckJoinGame);
     }
 
+    // Choose the initial location for player 1
+
+
     // Create the player's regiments
     auto createUnit = [&](Player &player, gf::Vector2i position, Division division) {
       // Add the new regiment to the model

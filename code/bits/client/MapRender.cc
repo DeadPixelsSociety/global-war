@@ -24,7 +24,7 @@ namespace gw {
     for (gf::Vector2i pos : m_gameState.data.map.getPositionRange()) {
       gf::Sprite sprite(m_texture);
 
-      MapData::TileType type = static_cast<MapData::TileType>(m_gameState.data.map.getTile(pos));
+      MapData::TileType type = m_gameState.data.map.getTile(pos);
 
       switch (type) {
         case MapData::TileType::Sea:

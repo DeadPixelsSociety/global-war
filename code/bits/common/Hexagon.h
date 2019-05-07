@@ -1,6 +1,8 @@
 #ifndef GW_HEXAGON_H
 #define GW_HEXAGON_H
 
+#include <array>
+
 #include <gf/Vector.h>
 #include <gf/Math.h>
 
@@ -14,10 +16,10 @@ namespace gw {
     gf::Vector2i coordinatesToPosition(gf::Vector2f coords);
 
     bool areNeighbors(gf::Vector2i lhs, gf::Vector2i rhs);
+    std::array<gf::Vector2i, 6> getNeighbors(gf::Vector2i position);
 
   }
 
 }
 
 #endif // GW_HEXAGON_H
-

@@ -13,8 +13,12 @@
 
 namespace gw {
 
+  namespace {
+    constexpr float MinDistanceSpawnLocation = 5.0f * Hexagon::Size;
+  }
+
   MapData::MapData(const gf::Path& path)
-  : m_map({ Width, Height }, static_cast<int>(TileType::Sea))
+  : m_map({ Width, Height }, TileType::Sea)
   {
     std::ifstream file(path.string());
     int y = 0;
@@ -26,11 +30,11 @@ namespace gw {
       for (int x = 0; x < Width; ++x) {
         switch (line[x]) {
           case '#':
-            m_map({ x, y }) = static_cast<int>(TileType::Sea);
+            m_map({ x, y }) = TileType::Sea;
             std::cout << '#';
             break;
           case ' ':
-            m_map({ x, y }) = static_cast<int>(TileType::Land);
+            m_map({ x, y }) = TileType::Land;
             std::cout << ' ';
             break;
         }
@@ -50,8 +54,54 @@ namespace gw {
     return m_map.getPositionRange();
   }
 
-  int MapData::getTile(gf::Vector2i position) const {
+  MapData::TileType MapData::getTile(gf::Vector2i position) const {
     return m_map(position);
+  }
+
+  std::vector<gf::Vector2i> MapData::generateInitialPosition(gf::Random &random, size_t nbPlayers) {
+    std::vector<gf::Vector2i> positions;
+
+    do {
+      // Choose random location
+      auto position = random.computePosition(gf::RectI(0, 0, Width, Height));
+
+      // Check if is not in sea
+      if (m_map(position) == TileType::Sea) {
+        continue;
+      }
+
+      // Check if at least three empty position next to origin
+      int validNeighbors = 0;
+      for (auto neighbor: Hexagon::getNeighbors(position)) {
+        if (m_map(neighbor) != TileType::Sea) {
+          ++validNeighbors;
+        }
+      }
+
+      if (validNeighbors < 3) {
+        continue;
+      }
+
+      // Check if far enough from the previous positions
+      auto worldPosition = Hexagon::positionToCoordinates(position);
+      bool validDistance = true;
+      for (auto previousInitialPosition: positions) {
+        auto worldPreviousPosition = Hexagon::positionToCoordinates(previousInitialPosition);
+
+        if (gf::euclideanDistance(worldPosition, worldPreviousPosition) < MinDistanceSpawnLocation) {
+          validDistance = false;
+        }
+      }
+
+      if (!validDistance) {
+        continue;
+      }
+
+      // Add to the positions
+      positions.push_back(position);
+    } while (positions.size() < nbPlayers);
+
+    return positions;
   }
 
 }

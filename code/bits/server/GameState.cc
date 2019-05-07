@@ -29,7 +29,7 @@ namespace gw {
     //       continue;
     //     }
     //
-    //     MapData::TileType type = static_cast<MapData::TileType>(data.map.getTile({ col, row }));
+    //     MapData::TileType type = data.map.getTile({ col, row });
     //     switch (type) {
     //       case MapData::TileType::Sea:
     //         std::cout << '#';

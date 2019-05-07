@@ -3,9 +3,16 @@
 
 #include <gf/Array2D.h>
 #include <gf/Path.h>
+#include <gf/Random.h>
 
 namespace gw {
   class MapData {
+  public:
+    enum class TileType: int {
+      Sea = 0,
+      Land = 1,
+    };
+
   public:
     static constexpr int Width = 32;
     static constexpr int Height = 32;
@@ -14,16 +21,11 @@ namespace gw {
 
     gf::Vector2i getTileCoordinate(gf::Vector2f screenCoordinate) const;
     gf::PositionRange<int> getPositionRange() const;
-    int getTile(gf::Vector2i position) const;
-
-  public:
-    enum class TileType: int {
-      Sea = 0,
-      Land = 1,
-    };
+    TileType getTile(gf::Vector2i position) const;
+    std::vector<gf::Vector2i> generateInitialPosition(gf::Random &random, size_t nbPlayers);
 
   private:
-    gf::Array2D<int, int> m_map;
+    gf::Array2D<TileType, int> m_map;
 
   };
 }
