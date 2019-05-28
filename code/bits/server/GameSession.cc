@@ -89,6 +89,12 @@ namespace gw {
       createUnit(*m_players[i], neighborsPositions[0], Division::Lancer);
       createUnit(*m_players[i], neighborsPositions[1], Division::Swordsman);
       createUnit(*m_players[i], neighborsPositions[2], Division::Horseman);
+
+      packet.type = PacketType::InitializePlayer;
+      packet.initializePlayer.playerID = m_players[i]->getID();
+      packet.initializePlayer.position = initialPositions[i];
+
+      m_players[i]->sendPacket(packet);
     }
 
   }
@@ -127,6 +133,7 @@ namespace gw {
           case PacketType::CreateRegiment:
           case PacketType::MoveUnit:
           case PacketType::KillUnit:
+          case PacketType::InitializePlayer:
             assert(false);
             break;
           }

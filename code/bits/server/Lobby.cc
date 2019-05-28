@@ -61,6 +61,7 @@ namespace gw {
     case PacketType::MoveRegiment:
     case PacketType::MoveUnit:
     case PacketType::KillUnit:
+    case PacketType::InitializePlayer:
       assert(false);
       break;
     }

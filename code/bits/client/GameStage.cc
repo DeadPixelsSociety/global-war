@@ -5,9 +5,12 @@
 #include <gf/Log.h>
 #include <gf/Event.h>
 
+#include "../common/Hexagon.h"
+
 namespace gw {
   GameStage::GameStage(gf::Window &window, gf::RenderWindow &renderer, GameState &gameState)
   : Stage(window, renderer, gameState)
+  , m_mainView({0, 0}, {Hexagon::Size * 10, Hexagon::Size * 10})
   , m_adaptor(m_renderer, m_mainView)
   , m_mapRender(gameState)
   , m_regimentsRender(gameState)
@@ -110,6 +113,12 @@ namespace gw {
           m_gameState.data.killUnit(packet.killUnit.position);
 
           break;
+
+        case PacketType::InitializePlayer:
+          assert(packet.initializePlayer.playerID == m_gameState.currentPlayerID);
+
+          gf::Log::info("Inital data: {playerID: %lx, pos: %d,%d}\n", packet.initializePlayer.playerID, packet.initializePlayer.position.x, packet.initializePlayer.position.y);
+          m_mainView.setCenter(Hexagon::positionToCoordinates(packet.initializePlayer.position));
       }
     }
 
