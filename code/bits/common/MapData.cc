@@ -58,7 +58,7 @@ namespace gw {
     return m_map(position);
   }
 
-  std::vector<gf::Vector2i> MapData::generateInitialPosition(gf::Random &random, size_t nbPlayers) {
+  std::vector<gf::Vector2i> MapData::generateInitialPositions(gf::Random &random, size_t nbPlayers) const {
     std::vector<gf::Vector2i> positions;
 
     do {
@@ -71,12 +71,7 @@ namespace gw {
       }
 
       // Check if at least three empty position next to origin
-      int validNeighbors = 0;
-      for (auto neighbor: Hexagon::getNeighbors(position)) {
-        if (m_map(neighbor) != TileType::Sea) {
-          ++validNeighbors;
-        }
-      }
+      std::size_t validNeighbors = getEmptyNeighborPositions(position).size();
 
       if (validNeighbors < 3) {
         continue;
@@ -102,6 +97,18 @@ namespace gw {
     } while (positions.size() < nbPlayers);
 
     return positions;
+  }
+
+  std::vector<gf::Vector2i> MapData::getEmptyNeighborPositions(gf::Vector2i position) const {
+    std::vector<gf::Vector2i> neighbors;
+
+    for (auto neighbor: Hexagon::getNeighbors(position)) {
+      if (m_map(neighbor) != TileType::Sea) {
+        neighbors.push_back(neighbor);
+      }
+    }
+
+    return neighbors;
   }
 
 }

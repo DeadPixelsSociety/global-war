@@ -4,6 +4,9 @@
 
 #include <gf/Clock.h>
 #include <gf/Sleep.h>
+#include <gf/Vector.h>
+
+#include "Singletons.h"
 
 namespace gw {
   namespace {
@@ -53,9 +56,6 @@ namespace gw {
       assert(packet.type == PacketType::AckJoinGame);
     }
 
-    // Choose the initial location for player 1
-
-
     // Create the player's regiments
     auto createUnit = [&](Player &player, gf::Vector2i position, Division division) {
       // Add the new regiment to the model
@@ -79,15 +79,18 @@ namespace gw {
       }
     };
 
-    // Player 1
-    createUnit(*m_players[0], { 0, 0 }, Division::Lancer);
-    createUnit(*m_players[0], { 0, 1 }, Division::Swordsman);
-    createUnit(*m_players[0], { 0, 2 }, Division::Horseman);
+    // Choose the initial location for players
+    auto initialPositions = m_gameState.data.map.generateInitialPositions(gRandom(), m_players.size());
 
-    // Player 2
-    createUnit(*m_players[1], { 1, 0 }, Division::Horseman);
-    createUnit(*m_players[1], { 1, 1 }, Division::Lancer);
-    createUnit(*m_players[1], { 1, 2 }, Division::Swordsman);
+    for (std::size_t i = 0; i < m_players.size(); ++i) {
+      auto neighborsPositions = m_gameState.data.map.getEmptyNeighborPositions(initialPositions[i]);
+      assert(neighborsPositions.size() >= 3);
+
+      createUnit(*m_players[i], neighborsPositions[0], Division::Lancer);
+      createUnit(*m_players[i], neighborsPositions[1], Division::Swordsman);
+      createUnit(*m_players[i], neighborsPositions[2], Division::Horseman);
+    }
+
   }
 
   void GameSession::launchGame() {

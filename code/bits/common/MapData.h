@@ -22,7 +22,8 @@ namespace gw {
     gf::Vector2i getTileCoordinate(gf::Vector2f screenCoordinate) const;
     gf::PositionRange<int> getPositionRange() const;
     TileType getTile(gf::Vector2i position) const;
-    std::vector<gf::Vector2i> generateInitialPosition(gf::Random &random, size_t nbPlayers);
+    std::vector<gf::Vector2i> generateInitialPositions(gf::Random &random, size_t nbPlayers) const;
+    std::vector<gf::Vector2i> getEmptyNeighborPositions(gf::Vector2i position) const;
 
   private:
     gf::Array2D<TileType, int> m_map;
