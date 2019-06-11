@@ -43,6 +43,7 @@ namespace gw {
     //   std::cout << '\n';
     // }
 
+    // Handle the movement and attack
     for (auto &moveOrder: moveOrders) {
       moveOrder.countdown -= time;
 
@@ -54,7 +55,11 @@ namespace gw {
         Regiment* destinationRegiment = data.getRegiment(moveOrder.destination);
         assert(originRegiment != destinationRegiment);
 
-        if (destinationRegiment != nullptr && originRegiment->ownerID != destinationRegiment->ownerID) {
+        if (originRegiment->count <= 0) {
+          continue;
+        }
+
+        if (destinationRegiment != nullptr && originRegiment->ownerID != destinationRegiment->ownerID && destinationRegiment->count > 0) {
           gf::Log::info("Attack regiment form {%d,%d} to {%d,%d}\n",
             moveOrder.origin.x, moveOrder.origin.y,
             moveOrder.destination.x, moveOrder.destination.y);
@@ -151,6 +156,30 @@ namespace gw {
 
     // Clear all empty regiment
     data.cleanUpRegiments();
-    // I'am not sure how develop the code
+  }
+
+  void GameState::checkEndCondition(const std::vector<gf::Id> &players) {
+    gf::Id winner = InvalidPlayerID;
+
+    for (auto player: players) {
+      for (auto &regiment: data.regiments) {
+        if (regiment.ownerID == player) {
+          if (winner != InvalidPlayerID) {
+            return;
+          }
+
+          winner = player;
+          break;
+        }
+      }
+    }
+
+    assert(winner != InvalidPlayerID);
+
+    Packet packet;
+    packet.type = PacketType::WinGame;
+    packet.winGame.winner = winner;
+
+    pendingPackets.push_back(packet);
   }
 }

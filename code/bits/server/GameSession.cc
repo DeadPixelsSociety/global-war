@@ -12,6 +12,7 @@ namespace gw {
   namespace {
 
     constexpr gf::Time TickTime = gf::seconds(1 / 120.0f);
+    constexpr int IntialRegimentSize = 1;
 
   }
 
@@ -62,7 +63,7 @@ namespace gw {
       Regiment regiment;
       regiment.ownerID = player.getID();
       regiment.position = position;
-      regiment.count = 40;
+      regiment.count = IntialRegimentSize;
       regiment.division = division;
       m_gameState.data.regiments.push_back(regiment);
 
@@ -101,6 +102,13 @@ namespace gw {
 
   void GameSession::launchGame() {
     std::thread([this](){
+      // Create the player ID list
+      std::vector<gf::Id> playerIDs;
+
+      for (auto *player: m_players) {
+        playerIDs.push_back(player->getID());
+      }
+
       gf::Clock clock;
 
       for(;;) {
@@ -134,6 +142,7 @@ namespace gw {
           case PacketType::MoveUnit:
           case PacketType::KillUnit:
           case PacketType::InitializePlayer:
+          case PacketType::WinGame:
             assert(false);
             break;
           }
@@ -142,6 +151,9 @@ namespace gw {
         // Update model
         gf::Time time = clock.restart();
         m_gameState.update(time);
+
+        // Check the end condition
+        m_gameState.checkEndCondition(playerIDs);
 
         // Send all packets
         for (auto &packet: m_gameState.pendingPackets) {

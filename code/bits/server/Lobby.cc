@@ -62,6 +62,7 @@ namespace gw {
     case PacketType::MoveUnit:
     case PacketType::KillUnit:
     case PacketType::InitializePlayer:
+    case PacketType::WinGame:
       assert(false);
       break;
     }

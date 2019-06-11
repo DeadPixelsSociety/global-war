@@ -20,6 +20,7 @@ namespace gw {
     GameState();
 
     void update(gf::Time time) override;
+    void checkEndCondition(const std::vector<gf::Id> &players);
 
     Data data;
     std::vector<MoveOrder> moveOrders;

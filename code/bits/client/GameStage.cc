@@ -119,6 +119,13 @@ namespace gw {
 
           gf::Log::info("Inital data: {playerID: %lx, pos: %d,%d}\n", packet.initializePlayer.playerID, packet.initializePlayer.position.x, packet.initializePlayer.position.y);
           m_mainView.setCenter(Hexagon::positionToCoordinates(packet.initializePlayer.position));
+
+          break;
+
+        case PacketType::WinGame:
+          gf::Log::info("Winner playerID: %lx\n", packet.winGame.winner);
+
+          break;
       }
     }
 

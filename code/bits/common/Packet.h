@@ -24,6 +24,7 @@ namespace gw {
     MoveUnit,
     KillUnit,
     InitializePlayer,
+    WinGame,
   };
 
   static constexpr gf::Id InvalidPlayerID = gf::InvalidId;
@@ -68,6 +69,9 @@ namespace gw {
     gf::Vector<int32_t, 2> position;
   };
 
+  struct WinGame {
+    gf::Id winner;
+  };
 
   struct Packet {
     PacketType type;
@@ -81,6 +85,7 @@ namespace gw {
       MoveUnit moveUnit;
       KillUnit killUnit;
       InitializePlayer initializePlayer;
+      WinGame winGame;
     };
   };
 
@@ -131,6 +136,10 @@ namespace gw {
       case PacketType::InitializePlayer:
         ar | packet.initializePlayer.playerID;
         ar | packet.initializePlayer.position;
+        break;
+
+      case PacketType::WinGame:
+        ar | packet.winGame.winner;
         break;
     }
 

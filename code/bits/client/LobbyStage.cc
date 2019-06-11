@@ -72,6 +72,7 @@ namespace gw {
         case PacketType::MoveUnit:
         case PacketType::KillUnit:
         case PacketType::InitializePlayer:
+        case PacketType::WinGame:
           gf::Log::error("Receive unexpected packet in lobby\n");
           break;
 
