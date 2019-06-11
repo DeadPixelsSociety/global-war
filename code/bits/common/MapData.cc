@@ -63,7 +63,7 @@ namespace gw {
 
     do {
       // Choose random location
-      auto position = random.computePosition(gf::RectI(0, 0, Width, Height));
+      auto position = random.computePosition(gf::RectI(0, 0, Width - 1, Height - 1));
 
       // Check if is not in sea
       if (m_map(position) == TileType::Sea) {

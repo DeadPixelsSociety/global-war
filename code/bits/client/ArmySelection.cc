@@ -48,7 +48,7 @@ namespace gw {
           gf::Vector2i position = m_gameState.data.map.getTileCoordinate(m_target->mapPixelToCoords(event.mouseButton.coords, *m_view));
           gf::Log::info("possible destination: %i x %i\n", position.x, position.y);
 
-          if (isPositionValid(position) && Hexagon::areNeighbors(m_source, position)) {
+          if (m_gameState.data.isValidMove(m_source, position)) {
             m_destination = position;
             gf::Log::info("destination: %i x %i\n", position.x, position.y);
             m_state = State::WaitingRegiment;

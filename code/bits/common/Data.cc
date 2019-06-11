@@ -2,7 +2,15 @@
 
 #include <gf/VectorOps.h>
 
+#include "Hexagon.h"
+
 namespace gw {
+
+  namespace {
+    bool isPositionValid(gf::Vector2i position) {
+      return 0 <= position.x && position.x < MapData::Width && 0 <= position.y && position.y < MapData::Height;
+    }
+  }
 
   Data::Data(const gf::Path& path)
   : map(path) {
@@ -50,12 +58,24 @@ namespace gw {
     }), regiments.end());
   }
 
+
+
   bool Data::isValidMove(gf::Vector2i origin, gf::Vector2i destination) {
-    if (origin == destination) { // TODO: verify destination next to origin
+    if (origin == destination) {
       return false;
     }
 
-    // TODO: Not in sea
+    if (!isPositionValid(destination)) {
+      return false;
+    }
+
+    if (!Hexagon::areNeighbors(origin, destination)) {
+      return false;
+    }
+
+    if (map.getTile(destination) == MapData::TileType::Sea) {
+      return false;
+    }
 
     Regiment* destinationRegiment = getRegiment(destination);
     Regiment* originRegiment = getRegiment(origin);
