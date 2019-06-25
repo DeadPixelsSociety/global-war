@@ -3,6 +3,7 @@
 #include <gf/Log.h>
 #include <gf/Unused.h>
 
+#include "ClientMessages.h"
 #include "Singletons.h"
 
 namespace gw {
@@ -49,10 +50,18 @@ namespace gw {
           auto it = packet.joinGame.playersID.begin();
           m_gameState.allPlayerID.insert(m_gameState.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
 
+          // Send the acknowledge to join session game
+          Packet packet;
+          packet.type = PacketType::AckJoinGame;
+          bool ok = m_gameState.threadCom.sendPacket(packet);
+          assert(ok);
+
           // Disable the scene
-          hide();
-          pause();
-          setActive(false);
+          GameStart gameStart;
+          gMessageManager().sendMessage(&gameStart);
+          // hide();
+          // pause();
+          // setActive(false);
           break;
       }
     }

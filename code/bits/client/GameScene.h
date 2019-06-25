@@ -1,6 +1,7 @@
 #ifndef BITS_CLIENT_GAME_SCENE_H
 #define BITS_CLIENT_GAME_SCENE_H
 
+#include <gf/RenderTarget.h>
 #include <gf/Scene.h>
 
 #include "ArmySelection.h"
@@ -12,7 +13,7 @@
 namespace gw {
   class GameScene: public gf::Scene {
   public:
-    GameScene(const gf::Vector2i &initializeSize, GameState &gameState);
+    GameScene(const gf::Vector2i &initializeSize, GameState &gameState, const gf::RenderTarget& renderer);
 
   private:
     void doProcessEvent(gf::Event &event) override;
@@ -23,7 +24,7 @@ namespace gw {
   private:
     GameState& m_gameState;
 
-    // gf::ZoomingViewAdaptor m_adaptor; // TODO: BROKEN
+    gf::ZoomingViewAdaptor m_adaptor;
 
     // Main entities
     MapRender m_mapRender;
@@ -33,7 +34,7 @@ namespace gw {
     HUD m_hud;
 
     // State machines
-    // ArmySelection m_armySelection; // TODO: BROKEN
+    ArmySelection m_armySelection;
   };
 }
 

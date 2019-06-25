@@ -3,37 +3,31 @@
 #include <gf/Log.h>
 #include <gf/Unused.h>
 
+#include "../common/Hexagon.h"
+
 #include "Singletons.h"
 
 namespace gw {
-  GameScene::GameScene(const gf::Vector2i &initializeSize, GameState &gameState)
+  GameScene::GameScene(const gf::Vector2i &initializeSize, GameState &gameState, const gf::RenderTarget& renderer)
   : Scene(initializeSize)
   , m_gameState(gameState)
-  // , m_adaptor(m_renderer, m_mainView)
+  , m_adaptor(renderer, getWorldView())
   , m_mapRender(gameState)
   , m_regimentsRender(gameState)
   , m_hud(gameState)
-  // , m_armySelection(gameState)
+  , m_armySelection(gameState, renderer, getWorldView())
   {
-    addMainEntity(m_mapRender);
-    addMainEntity(m_regimentsRender);
+    setWorldViewSize({Hexagon::Size * 10, Hexagon::Size * 10});
+
+    addWorldEntity(m_mapRender);
+    addWorldEntity(m_regimentsRender);
 
     addHudEntity(m_hud);
-
-    // Register for a quick match
-    m_gameState.quickMatch();
-
-    // Send the acknowledge to join session game
-    Packet packet;
-    packet.type = PacketType::AckJoinGame;
-    bool ok = m_gameState.threadCom.sendPacket(packet);
-    assert(ok);
   }
 
   void GameScene::doProcessEvent(gf::Event &event) {
-    // TODO: BROKEN
-    // m_adaptor.processEvent(event);
-    // m_armySelection.processEvent(event);
+    m_adaptor.processEvent(event);
+    m_armySelection.processEvent(event);
   }
 
   void GameScene::doUpdate(gf::Time time) {
@@ -84,8 +78,7 @@ namespace gw {
           assert(packet.initializePlayer.playerID == m_gameState.currentPlayerID);
 
           gf::Log::info("Inital data: {playerID: %lx, pos: %d,%d}\n", packet.initializePlayer.playerID, packet.initializePlayer.position.x, packet.initializePlayer.position.y);
-          // TODO: BROKEN
-          // m_mainView.setCenter(Hexagon::positionToCoordinates(packet.initializePlayer.position));
+          setWorldViewCenter(Hexagon::positionToCoordinates(packet.initializePlayer.position));
 
           break;
 
