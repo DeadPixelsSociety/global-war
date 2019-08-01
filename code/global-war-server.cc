@@ -2,14 +2,16 @@
 
 #include <gf/Random.h>
 
-#include "bits/server/Lobby.h"
+// #include "bits/server/Lobby.h"
 #include "bits/server/Singletons.h"
+#include "bits/server/NetworkManagerServer.h"
 
 #include "config.h"
 
-using boost::asio::ip::tcp;
+// using boost::asio::ip::tcp;
 
 int main(int argc, char *argv[]) {
+  #if 0
   // Init singleton
   gf::SingletonStorage<gf::Random> storageForRandom(gw::gRandom);
 
@@ -30,6 +32,12 @@ int main(int argc, char *argv[]) {
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << '\n';
   }
+
+  #endif // 0
+  // Init singleton
+  gf::SingletonStorage<gf::Random> storageForRandom(gw::gRandom);
+
+  gw::NetworkManagerServer networkManager(argv[1], argv[2]);
 
   return 0;
 

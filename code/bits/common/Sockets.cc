@@ -10,93 +10,31 @@
 #include <thread>
 
 #include <gf/Log.h>
-#include <gf/Streams.h>
-#include <gf/Serialization.h>
-#include <gf/SerializationOps.h>
 
 using boost::asio::ip::tcp;
 
 namespace gw {
-  SocketTcp::SocketTcp()
-  : m_socket(m_ioService)
-  , m_state(SocketState::Disconnected) {
-  }
 
   SocketTcp::SocketTcp(boost::asio::ip::tcp::socket socket)
-  : m_socket(std::move(socket))
-  , m_state(SocketState::Connected) {
+  : m_socket(std::move(socket)) {
 
+  }
+
+  SocketTcp::SocketTcp(const char* server, const char* port)
+  : m_socket(m_ioService) {
+    tcp::resolver resolver(m_ioService);
+    boost::asio::connect(m_socket, resolver.resolve({ server, port }));
   }
 
   SocketTcp::SocketTcp(SocketTcp&& other)
-  : m_socket(std::move(other.m_socket))
-  , m_state(other.m_state) {
+  : m_socket(std::move(other.m_socket)) {
 
   }
 
   SocketTcp& SocketTcp::operator=(SocketTcp&& other) {
     m_socket = std::move(other.m_socket);
-    m_state = other.m_state;
 
     return *this;
-  }
-
-  SocketState SocketTcp::getState() const {
-    return m_state;
-  }
-
-  void SocketTcp::connectTo(const char* server, const char* port) {
-    tcp::resolver resolver(m_ioService);
-    boost::asio::connect(m_socket, resolver.resolve({ server, port }));
-    m_state = SocketState::Connected;
-  }
-
-  void SocketTcp::send(Packet &packet) {
-    if (m_state == SocketState::Disconnected) {
-      return;
-    }
-
-    constexpr int MaxLength = 1024;
-    uint8_t data[MaxLength];
-
-    gf::MemoryOutputStream stream(data);
-    gf::Serializer ar(stream);
-
-    ar | packet;
-
-    boost::system::error_code error;
-    boost::asio::write(m_socket, boost::asio::buffer(data, MaxLength), error);
-
-    if (error == boost::asio::error::eof) {
-      m_state = SocketState::Disconnected;
-      return; // Connection closed cleanly by peer
-    } else if (error) {
-      throw boost::system::system_error(error);
-    }
-  }
-
-  void SocketTcp::receive(Packet &packet) {
-    if (m_state == SocketState::Disconnected) {
-      return;
-    }
-
-    constexpr int MaxLength = 1024;
-    uint8_t data[MaxLength];
-
-    boost::system::error_code error;
-    size_t length = m_socket.read_some(boost::asio::buffer(data), error);
-
-    if (error == boost::asio::error::eof) {
-      m_state = SocketState::Disconnected;
-      return; // Connection closed cleanly by peer
-    } else if (error) {
-      throw boost::system::system_error(error);
-    }
-
-    gf::MemoryInputStream stream(gf::ArrayRef<uint8_t>(data, length));
-    gf::Deserializer ar(stream);
-
-    ar | packet;
   }
 
   ListenerTcp::ListenerTcp(std::uint16_t port)
@@ -104,16 +42,12 @@ namespace gw {
 
   }
 
-  void ListenerTcp::handleNewConnection(std::function<void(SocketTcp)> handler) {
-    std::thread([this, handler](){
-      for(;;) {
-        tcp::socket socket(m_ioService);
-        m_acceptor.accept(socket);
+  void ListenerTcp::waitNewConnection(std::function<void(boost::asio::ip::tcp::socket)> handler) {
+    // Accept the new connection
+    tcp::socket socket(m_ioService);
+    m_acceptor.accept(socket);
 
-        SocketTcp wrapper(std::move(socket));
-
-        handler(std::move(wrapper));
-      }
-    }).detach();
+    // Call the handler
+    handler(std::move(socket));
   }
 }

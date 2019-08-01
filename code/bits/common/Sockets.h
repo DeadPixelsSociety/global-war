@@ -5,18 +5,17 @@
 
 #include <boost/asio.hpp>
 
-#include "Packet.h"
+#include <gf/Streams.h>
+#include <gf/Serialization.h>
+#include <gf/SerializationOps.h>
+
+#include "Packets.h"
 
 namespace gw {
-  enum class SocketState {
-    Disconnected,
-    Connected,
-  };
-
   class SocketTcp {
   public:
-    SocketTcp();
-    SocketTcp(boost::asio::ip::tcp::socket socket);
+    SocketTcp(boost::asio::ip::tcp::socket socket); // Server side
+    SocketTcp(const char* server, const char* port); // Client side
 
     SocketTcp(const SocketTcp&) = delete;
     SocketTcp& operator=(const SocketTcp&) = delete;
@@ -24,17 +23,51 @@ namespace gw {
     SocketTcp(SocketTcp&& other);
     SocketTcp& operator=(SocketTcp&& other);
 
-    SocketState getState() const;
+    template <typename Packet>
+    void send(Packet &packet) {
+      constexpr int MaxLength = 1024;
+      uint8_t data[MaxLength];
 
-    void connectTo(const char* server, const char* port);
+      gf::MemoryOutputStream stream(data);
+      gf::Serializer ar(stream);
 
-    void send(Packet &packet);
-    void receive(Packet &packet);
+      ar | packet;
+
+      boost::system::error_code error;
+      boost::asio::write(m_socket, boost::asio::buffer(data, MaxLength), error);
+
+      if (error == boost::asio::error::eof) {
+        // TODO: How to handle the disconnection ? @ahugeat
+        return; // Connection closed cleanly by peer
+      } else if (error) {
+        throw boost::system::system_error(error);
+      }
+    }
+
+    template <typename Packet>
+    void receive(Packet &packet) {
+      constexpr int MaxLength = 1024;
+      uint8_t data[MaxLength];
+
+      boost::system::error_code error;
+      size_t length = m_socket.read_some(boost::asio::buffer(data), error);
+
+      if (error == boost::asio::error::eof) {
+        // TODO: How to handle the disconnection ? @ahugeat
+        return; // Connection closed cleanly by peer
+      } else if (error) {
+        throw boost::system::system_error(error);
+      }
+
+      gf::MemoryInputStream stream(gf::ArrayRef<uint8_t>(data, length));
+      gf::Deserializer ar(stream);
+
+      ar | packet;
+    }
 
   private:
     boost::asio::io_service m_ioService; // Move to static ? @ahugeat
     boost::asio::ip::tcp::socket m_socket;
-    SocketState m_state;
   };
 
   class ListenerTcp {
@@ -47,7 +80,7 @@ namespace gw {
     ListenerTcp(SocketTcp&& other) = delete;
     ListenerTcp& operator=(SocketTcp&& other) = delete;
 
-    void handleNewConnection(std::function<void(SocketTcp)> handler);
+    void waitNewConnection(std::function<void(boost::asio::ip::tcp::socket)> handler);
 
   private:
     boost::asio::io_service m_ioService;

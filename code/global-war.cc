@@ -4,15 +4,21 @@
 #include <gf/ResourceManager.h>
 #include <gf/Unused.h>
 
-#include "bits/client/ClientMessages.h"
-#include "bits/client/GameScene.h"
-#include "bits/client/GameState.h"
-#include "bits/client/LobbyScene.h"
-#include "bits/client/Singletons.h"
+#include <gf/Log.h>
+
+// #include "bits/client/ClientMessages.h"
+// #include "bits/client/GameScene.h"
+// #include "bits/client/GameState.h"
+// #include "bits/client/LobbyScene.h"
+// #include "bits/client/Singletons.h"
+
+#include "bits/common/Packets.h"
+#include "bits/common/Sockets.h"
 
 #include "config.h"
 
 int main(int argc, char *argv[]) {
+  #if 0
   try {
     if (argc != 3) {
       std::cerr << "Usage: global-war <host> <port>\n";
@@ -55,6 +61,17 @@ int main(int argc, char *argv[]) {
   } catch (std::exception& e) {
     std::cerr << "Exception: " << e.what() << "\n";
   }
+
+  #endif // 0
+
+  gw::SocketTcp socket(argv[1], argv[2]);
+
+  gw::PacketLobbyClient packet;
+  socket.receive(packet);
+
+  assert(packet.type == gw::PacketLobbyClientType::CreatePlayer);
+
+  gf::Log::debug("Player ID: %lx\n", packet.createPlayer.playerID);
 
   return 0;
 }
