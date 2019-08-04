@@ -5,6 +5,7 @@
 
 #include <boost/asio.hpp>
 
+#include <gf/Log.h>
 #include <gf/Streams.h>
 #include <gf/Serialization.h>
 #include <gf/SerializationOps.h>
@@ -24,9 +25,9 @@ namespace gw {
     SocketTcp& operator=(SocketTcp&& other);
 
     template <typename Packet>
-    void send(Packet &packet) {
+    bool send(Packet &packet) {
       constexpr int MaxLength = 1024;
-      uint8_t data[MaxLength];
+      uint8_t data[MaxLength] = { 0 };
 
       gf::MemoryOutputStream stream(data);
       gf::Serializer ar(stream);
@@ -38,31 +39,37 @@ namespace gw {
 
       if (error == boost::asio::error::eof) {
         // TODO: How to handle the disconnection ? @ahugeat
-        return; // Connection closed cleanly by peer
+        return false; // Connection closed cleanly by peer
       } else if (error) {
         throw boost::system::system_error(error);
+        return false;
       }
+
+      return true;
     }
 
     template <typename Packet>
-    void receive(Packet &packet) {
+    bool receive(Packet &packet) {
       constexpr int MaxLength = 1024;
-      uint8_t data[MaxLength];
+      uint8_t data[MaxLength] = { 0 };
 
       boost::system::error_code error;
       size_t length = m_socket.read_some(boost::asio::buffer(data), error);
 
       if (error == boost::asio::error::eof) {
         // TODO: How to handle the disconnection ? @ahugeat
-        return; // Connection closed cleanly by peer
+        return false; // Connection closed cleanly by peer
       } else if (error) {
         throw boost::system::system_error(error);
+        return false;
       }
 
       gf::MemoryInputStream stream(gf::ArrayRef<uint8_t>(data, length));
       gf::Deserializer ar(stream);
 
       ar | packet;
+
+      return true;
     }
 
   private:

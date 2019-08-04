@@ -94,6 +94,7 @@ namespace gw {
 
   struct PacketLobbyServer {
     PacketLobbyServerType type;
+    gf::Id playerID;
 
     union {
       RequestMatch requestMatch;
@@ -103,6 +104,8 @@ namespace gw {
 
   struct PacketGameServer {
     PacketGameServerType type;
+    gf::Id playerID;
+    gf::Id gameSession;
 
     union {
       MoveRegiment moveRegiment;
@@ -111,6 +114,7 @@ namespace gw {
 
   struct PacketLobbyClient {
     PacketLobbyClientType type;
+    gf::Id playerID;
 
     union {
       CreatePlayer createPlayer;
@@ -120,6 +124,8 @@ namespace gw {
 
   struct PacketGameClient {
     PacketGameClientType type;
+    gf::Id playerID;
+    gf::Id gameSession;
 
     union {
       InitializePlayer initializePlayer;
@@ -133,6 +139,7 @@ namespace gw {
   template<class Archive>
   Archive& operator|(Archive& ar, PacketLobbyServer& packet) {
     ar | packet.type;
+    ar | packet.playerID;
 
     switch (packet.type) {
       case PacketLobbyServerType::RequestMatch:
@@ -150,6 +157,8 @@ namespace gw {
   template<class Archive>
   Archive& operator|(Archive& ar, PacketGameServer& packet) {
     ar | packet.type;
+    ar | packet.playerID;
+    ar | packet.gameSession;
 
     switch (packet.type) {
       case PacketGameServerType::MoveRegiment:
@@ -165,6 +174,7 @@ namespace gw {
   template<class Archive>
   Archive& operator|(Archive& ar, PacketLobbyClient& packet) {
     ar | packet.type;
+    ar | packet.playerID;
 
     switch (packet.type) {
       case PacketLobbyClientType::CreatePlayer:
@@ -184,6 +194,8 @@ namespace gw {
   template<class Archive>
   Archive& operator|(Archive& ar, PacketGameClient& packet) {
     ar | packet.type;
+    ar | packet.playerID;
+    ar | packet.gameSession;
 
     switch (packet.type) {
       case PacketGameClientType::InitializePlayer:

@@ -3,13 +3,15 @@
 
 #include <gf/Message.h>
 
+#include "../common/Packets.h"
+
 using namespace gf::literals;
 
 namespace gw {
 
-  struct PlayerDisconnected : public gf::Message {
-    static const gf::Id type = "PlayerDisconnected"_id;
-    gf::Id playerID; // ID of next player
+  struct PlayerInLobby: public gf::Message {
+    static const gf::Id type = "PlayerInLobby"_id;
+    gf::Id playerID;
   };
 
 }

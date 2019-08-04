@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 #include <gf/SceneManager.h>
 #include <gf/ResourceManager.h>
@@ -70,8 +72,15 @@ int main(int argc, char *argv[]) {
   socket.receive(packet);
 
   assert(packet.type == gw::PacketLobbyClientType::CreatePlayer);
+  assert(packet.playerID == packet.createPlayer.playerID);
 
   gf::Log::debug("Player ID: %lx\n", packet.createPlayer.playerID);
+
+  for(;;) {
+    using namespace std::chrono_literals;
+
+    std::this_thread::sleep_for(60s);
+  }
 
   return 0;
 }

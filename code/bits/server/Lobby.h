@@ -1,40 +1,27 @@
 #ifndef BITS_SERVER_LOBBY
 #define BITS_SERVER_LOBBY
 
+#include <mutex>
 #include <vector>
-#include <map>
 
 #include <gf/Id.h>
-#include <gf/Queue.h>
-#include <gf/Random.h>
+#include <gf/Message.h>
 
-#include "../common/Packet.h"
-#include "../common/Sockets.h"
-
-#include "GameSession.h"
-#include "Player.h"
+#include "NetworkManagerServer.h"
 
 namespace gw {
   class Lobby {
   public:
-    Lobby(std::uint16_t port);
+    Lobby();
 
-    void addNewPlayer(SocketTcp socket);
-    void processPacket();
-
-  private:
-    gf::Id generateId() const;
-    void createNewGame();
+    void processPackets(NetworkManagerServer& networkManager);
 
   private:
-    ListenerTcp m_listener;
+    gf::MessageStatus onPlayerInLobby(gf::Id id, gf::Message *msg);
 
-    gf::Queue<Packet> m_comQueue;
-
-    std::mutex m_playerMutex;
-    std::map<gf::Id, Player> m_players;
-
-    std::map<gf::Id, GameSession> m_games;
+  private:
+    std::vector<gf::Id> m_lobbyPlayers;
+    std::mutex m_lobbyVectorMutex;
   };
 }
 

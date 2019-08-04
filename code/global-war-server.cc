@@ -2,7 +2,7 @@
 
 #include <gf/Random.h>
 
-// #include "bits/server/Lobby.h"
+#include "bits/server/Lobby.h"
 #include "bits/server/Singletons.h"
 #include "bits/server/NetworkManagerServer.h"
 
@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
 
   gf::SingletonStorage<gf::AssetManager> storageForResourceManager(gw::gAssetManager);
   gw::gAssetManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
+
 
   try {
     if (argc != 2) {
@@ -36,8 +37,23 @@ int main(int argc, char *argv[]) {
   #endif // 0
   // Init singleton
   gf::SingletonStorage<gf::Random> storageForRandom(gw::gRandom);
+  gf::SingletonStorage<gf::MessageManager> storageForMessageManager(gw::gMessageManager);
 
   gw::NetworkManagerServer networkManager(argv[1], argv[2]);
+
+  // Wait for new connexions
+  std::thread([&]() {
+    for (;;) {
+      networkManager.waitConnection();
+    }
+  }).detach();
+
+  gw::Lobby lobby;
+
+  // Process pending packet in lobby
+  for (;;) {
+    lobby.processPackets(networkManager);
+  }
 
   return 0;
 
