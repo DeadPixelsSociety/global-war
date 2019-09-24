@@ -30,25 +30,25 @@ namespace gw {
         std::forward_as_tuple(std::move(socket)));
       assert(inserted);
 
-      // Create the lobby queue
-      std::map<gf::Id, gf::Queue<PacketLobbyServer>>::iterator itLobbyQueue;
-
-      std::tie(itLobbyQueue, inserted) = m_lobbyQueues.emplace(std::piecewise_construct,
-        std::forward_as_tuple(playerID),
-        std::forward_as_tuple());
-      assert(inserted);
-
       // Launch the thread to receive the packets
-      std::thread([&](){
+      std::thread([&,itLobbySocket](){
         PacketLobbyServer packet;
         while (itLobbySocket->second.receive(packet)) {
-          std::unique_lock<std::mutex> lock(m_mutexLobbyPackets);
-          itLobbyQueue->second.push(packet);
-          ++m_pendingLobbyPackets;
-
-          m_conditionLockMutexLobby.notify_all();
+          m_lobbyQueue.push(packet);
         }
+
+        // TODO: handle disconnections
+        m_lobbyClients.erase(itLobbySocket);
       }).detach();
+
+      /**
+       * Supprimer la map de LobbyQueue pour n'en mettre qu'une (le mutex est déjà dedans)
+       * L'attente des paquets du lobby se fera sur la queue unique
+       * Faire deux fonctions de waitConnexion pour le lobby et le game
+       * Bien penser à passer les itérateurs par copie !
+       * Pour gérer les deconnexions, faire le delete en dehors de la boucle de chaque thread (les iterateurs resteront valides)
+       * Lors de la connexion d'un game socket, vérifier le PlayerID
+       */
 
       // // Create the game socket
       // std::map<gf::Id, SocketTcp>::iterator itGameSocket;
@@ -93,24 +93,9 @@ namespace gw {
     });
   }
 
-  bool NetworkManagerServer::receiveLobbyPacket(gf::Id playerID, PacketLobbyServer &packet) {
-    std::unique_lock<std::mutex> lock(m_mutexLobbyPackets);
-
-    // Wait at least one packets
-    while (m_pendingLobbyPackets < 1){
-      m_conditionLockMutexLobby.wait(lock);
-    }
-
-    // Get the client queue, throw an exception if client not exists
-    auto &clientQueue = m_lobbyQueues.at(playerID);
-
+  bool NetworkManagerServer::receiveLobbyPackets(PacketLobbyServer &packet) {
     // Get one packet
-    if (clientQueue.poll(packet)) {
-      --m_pendingLobbyPackets;
-      return true;
-    }
-
-    return false;
+    return m_lobbyQueue.poll(packet);
   }
 
   gf::Id NetworkManagerServer::generateId() const {

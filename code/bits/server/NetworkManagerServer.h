@@ -17,7 +17,7 @@ namespace gw {
 
     void waitConnection();
 
-    bool receiveLobbyPacket(gf::Id playerID, PacketLobbyServer &packet);
+    bool receiveLobbyPackets(PacketLobbyServer &packet);
 
   private:
     gf::Id generateId() const;
@@ -33,7 +33,7 @@ namespace gw {
     std::map<gf::Id, SocketTcp> m_lobbyClients;
     std::map<gf::Id, SocketTcp> m_gameClients;
 
-    std::map<gf::Id, gf::Queue<PacketLobbyServer>> m_lobbyQueues;
+    gf::Queue<PacketLobbyServer> m_lobbyQueue;
     std::map<gf::Id, gf::Queue<PacketGameServer>> m_gameQueues;
 
     std::mutex m_mutexLobbyPackets;

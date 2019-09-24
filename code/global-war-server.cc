@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   gw::NetworkManagerServer networkManager(argv[1], argv[2]);
 
   // Wait for new connexions
-  std::thread([&]() {
+  std::thread([&networkManager]() {
     for (;;) {
       networkManager.waitConnection();
     }

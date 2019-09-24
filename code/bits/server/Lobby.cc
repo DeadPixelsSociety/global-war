@@ -13,14 +13,11 @@ namespace gw {
   }
 
   void Lobby::processPackets(NetworkManagerServer& networkManager) {
-    std::lock_guard<std::mutex> lock(m_lobbyVectorMutex);
-    // Read all pending packets
-    for (auto playerID: m_lobbyPlayers) {
-      PacketLobbyServer packet;
+    PacketLobbyServer packet;
 
-      while (networkManager.receiveLobbyPacket(playerID, packet)) {
-        // Do somethings
-      }
+    // Read all pending packets
+    while (networkManager.receiveLobbyPackets(packet)) {
+      // Do somethings
     }
   }
 
