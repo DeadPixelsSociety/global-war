@@ -7,36 +7,27 @@
 
 #include "Singletons.h"
 
+#include "../common/Packets.h"
+
 namespace gw {
-  GameState::GameState(char *hostname, char* port)
-  : threadCom(hostname, port, comQueue)
+  GameState::GameState()
+  : currentPlayerID(InvalidPlayerID)
   , data(gResourceManager().getAbsolutePath("map.txt")) {
-    // Retreive the player ID
-    Packet packet;
-
-    if (!threadCom.receivePacket(packet)) {
-      assert(false);
-    }
-
-    assert(packet.type == PacketType::NewPlayer);
-
-    currentPlayerID = packet.newPlayer.playerID;
-    gf::Log::info("Player ID: %lx\n", currentPlayerID);
   }
 
   void GameState::update(gf::Time time) {
     data.cleanUpRegiments();
   }
 
-  void GameState::quickMatch() {
-    Packet packet;
-    packet.type = PacketType::QuickMatch;
-    packet.quickMatch.playerID = currentPlayerID;
-
-    if (!threadCom.sendPacket(packet)) {
-      assert(false);
-    }
-  }
+  // void GameState::quickMatch() {
+  //   Packet packet;
+  //   packet.type = PacketType::QuickMatch;
+  //   packet.quickMatch.playerID = currentPlayerID;
+  //
+  //   if (!threadCom.sendPacket(packet)) {
+  //     assert(false);
+  //   }
+  // }
 
   gf::Color4f GameState::getPlayerColor() {
     return getPlayerColor(currentPlayerID);

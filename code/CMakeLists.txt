@@ -9,15 +9,15 @@ add_executable(global-war
   global-war.cc
   # bits/client/ArmySelection.cc
   # bits/client/GameScene.cc
-  # bits/client/GameState.cc
+  bits/client/GameState.cc
   # bits/client/HUD.cc
-  # bits/client/LobbyScene.cc
+  bits/client/LobbyScene.cc
   # bits/client/MapRender.cc
   bits/client/NetworkManagerClient.cc
   # bits/client/RegimentRender.cc
-  # bits/client/Singletons.cc
-  # bits/client/Stage.cc
-  # bits/client/WaitScreen.cc
+  bits/client/Singletons.cc
+  bits/client/Stage.cc
+  bits/client/WaitScreen.cc
 
   bits/common/Data.cc
   bits/common/Hexagon.cc

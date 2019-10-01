@@ -8,7 +8,6 @@
 #include <gf/ResourceManager.h>
 #include <gf/Vector.h>
 
-#include "../common/Packet.h"
 #include "../common/Data.h"
 
 #include "GameState.h"
