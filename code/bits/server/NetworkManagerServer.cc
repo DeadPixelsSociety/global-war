@@ -46,8 +46,11 @@ namespace gw {
        * L'attente des paquets du lobby se fera sur la queue unique
        * Faire deux fonctions de waitConnexion pour le lobby et le game
        * Bien penser à passer les itérateurs par copie !
-       * Pour gérer les deconnexions, faire le delete en dehors de la boucle de chaque thread (les iterateurs resteront valides)
-       * Lors de la connexion d'un game socket, vérifier le PlayerID
+       * Pour gérer les deconnexions, faire le delete pour les deux map en dehors de la boucle de chaque thread (les iterateurs resteront valides)
+       * Lors de la connexion d'un game socket, vérifier que le PlayerID est présent dans la map de lobby
+       *   si oui ok, on crée la socket jeu
+       *   si non on casse le truc
+       * Avant de lancer la session de jeu on vérifie que les deux sockets sont crées
        */
 
       // // Create the game socket

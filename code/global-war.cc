@@ -12,6 +12,7 @@
 // #include "bits/client/GameScene.h"
 // #include "bits/client/GameState.h"
 // #include "bits/client/LobbyScene.h"
+#include "bits/client/NetworkManagerClient.h"
 // #include "bits/client/Singletons.h"
 
 #include "bits/common/Packets.h"
@@ -66,15 +67,11 @@ int main(int argc, char *argv[]) {
 
   #endif // 0
 
-  gw::SocketTcp socket(argv[1], argv[2]);
+  gw::NetworkManagerClient network(argv[1], argv[2], nullptr);
 
-  gw::PacketLobbyClient packet;
-  socket.receive(packet);
+  gf::Id playerID = network.getPlayerID();
 
-  assert(packet.type == gw::PacketLobbyClientType::CreatePlayer);
-  assert(packet.playerID == packet.createPlayer.playerID);
-
-  gf::Log::debug("Player ID: %lx\n", packet.createPlayer.playerID);
+  gf::Log::debug("Player ID: %lx\n", playerID);
 
   for(;;) {
     using namespace std::chrono_literals;

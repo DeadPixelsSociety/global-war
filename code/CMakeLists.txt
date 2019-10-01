@@ -13,7 +13,7 @@ add_executable(global-war
   # bits/client/HUD.cc
   # bits/client/LobbyScene.cc
   # bits/client/MapRender.cc
-  # bits/client/NetworkManagerClient.cc
+  bits/client/NetworkManagerClient.cc
   # bits/client/RegimentRender.cc
   # bits/client/Singletons.cc
   # bits/client/Stage.cc
