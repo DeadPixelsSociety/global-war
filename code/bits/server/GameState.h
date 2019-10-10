@@ -9,7 +9,6 @@
 #include "../common/Packet.h"
 
 namespace gw {
-
   struct MoveOrder {
     gf::Vector2i origin;
     gf::Vector2i destination;

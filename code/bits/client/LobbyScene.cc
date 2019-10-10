@@ -28,13 +28,19 @@ namespace gw {
     while (m_network.receiveLobbyPacket(packet)) {
       switch (packet.type) {
         case PacketLobbyClientType::CreatePlayer:
-          assert(packet.type == gw::PacketLobbyClientType::CreatePlayer);
           assert(packet.playerID == packet.createPlayer.playerID);
           assert(m_gameState.currentPlayerID == InvalidPlayerID);
 
           m_gameState.currentPlayerID = packet.playerID;
 
           gf::Log::info("Player ID: %lx\n", m_gameState.currentPlayerID);
+
+          PacketLobbyServer packetServer;
+          packetServer.type = PacketLobbyServerType::RequestMatch;
+          packetServer.playerID = m_gameState.currentPlayerID;
+          packetServer.requestMatch.playerID = m_gameState.currentPlayerID;
+
+          m_network.sendLobbyPacket(packetServer);
           break;
 
         case PacketLobbyClientType::JoinGame:

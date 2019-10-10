@@ -20,8 +20,6 @@ namespace gw {
     bool receiveLobbyPackets(PacketLobbyServer &packet);
 
   private:
-    gf::Id generateId() const;
-
     void sendLobbyPacket(gf::Id playerID, PacketLobbyClient &packet);
 
   private:

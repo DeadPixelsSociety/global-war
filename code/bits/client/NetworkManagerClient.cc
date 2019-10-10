@@ -17,18 +17,12 @@ namespace gw {
 
   }
 
-  // gf::Id NetworkManagerClient::getPlayerID() {
-  //   gw::PacketLobbyClient packet;
-  //   m_lobbySocket.receive(packet);
-  //
-  //   assert(packet.type == gw::PacketLobbyClientType::CreatePlayer);
-  //   assert(packet.playerID == packet.createPlayer.playerID);
-  //
-  //   return packet.playerID;
-  // }
-
   bool NetworkManagerClient::receiveLobbyPacket(PacketLobbyClient &packet) {
     return m_lobbyQueue.poll(packet);
+  }
+
+  bool NetworkManagerClient::sendLobbyPacket(PacketLobbyServer &packet) {
+    return m_lobbySocket.send(packet);
   }
 
 }

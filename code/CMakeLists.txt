@@ -54,6 +54,7 @@ add_executable(global-war-server
   bits/server/NetworkManagerServer.cc
   # bits/server/Player.cc
   bits/server/Singletons.cc
+  bits/server/Utils.cc
 
   bits/common/Data.cc
   bits/common/Hexagon.cc

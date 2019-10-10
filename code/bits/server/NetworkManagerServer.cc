@@ -6,6 +6,7 @@
 
 #include "Messages.h"
 #include "Singletons.h"
+#include "Utils.h"
 
 namespace gw {
 
@@ -79,7 +80,7 @@ namespace gw {
       //   }
       // }).detach();
 
-      gf::Log::debug("New client: %lx\n", playerID);
+      gf::Log::info("New player with ID #%lx\n", playerID);
 
       // Send the ID to the player
       PacketLobbyClient packet;
@@ -99,15 +100,6 @@ namespace gw {
   bool NetworkManagerServer::receiveLobbyPackets(PacketLobbyServer &packet) {
     // Get one packet
     return m_lobbyQueue.poll(packet);
-  }
-
-  gf::Id NetworkManagerServer::generateId() const {
-    // Get the ID
-    uint64_t min = std::numeric_limits<uint64_t>::min();
-    uint64_t max = std::numeric_limits<uint64_t>::max();
-    uint64_t number = gRandom().computeUniformInteger(min, max);
-
-    return number;
   }
 
   void NetworkManagerServer::sendLobbyPacket(gf::Id playerID, PacketLobbyClient &packet) {

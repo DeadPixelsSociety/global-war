@@ -10,9 +10,8 @@ namespace gw {
   public:
     NetworkManagerClient(const char* hostname, const char* portLobby, const char* portGame);
 
-    // gf::Id getPlayerID();
-
     bool receiveLobbyPacket(PacketLobbyClient &packet);
+    bool sendLobbyPacket(PacketLobbyServer &packet);
 
   private:
     SocketTcp m_lobbySocket;

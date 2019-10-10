@@ -1,6 +1,10 @@
 #include <iostream>
 
+#include <gf/Clock.h>
 #include <gf/Random.h>
+#include <gf/Sleep.h>
+
+#include "bits/common/Constants.h"
 
 #include "bits/server/Lobby.h"
 #include "bits/server/Singletons.h"
@@ -51,8 +55,21 @@ int main(int argc, char *argv[]) {
   gw::Lobby lobby;
 
   // Process pending packet in lobby
-  for (;;) {
+  std::thread([&networkManager, &lobby]() {
+    for (;;) {
+    }
+  }).detach();
+
+  gf::Clock clock;
+  for(;;) {
     lobby.processPackets(networkManager);
+
+    gf::Time time = clock.restart();
+    lobby.update();
+
+    if (time < gw::TickTime) {
+      gf::sleep(gw::TickTime - time);
+    }
   }
 
   return 0;

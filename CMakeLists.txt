@@ -19,7 +19,7 @@ include(GNUInstallDirs)
 # list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/extras/cmake")
 
 find_package(gf REQUIRED)
-find_package(Boost REQUIRED COMPONENTS locale)
+find_package(Boost REQUIRED COMPONENTS locale filesystem)
 
 if(MSVC)
   message(STATUS "Using MSVC compiler")
