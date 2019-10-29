@@ -43,143 +43,143 @@ namespace gw {
     //   std::cout << '\n';
     // }
 
-    // Handle the movement and attack
-    for (auto &moveOrder: moveOrders) {
-      moveOrder.countdown -= time;
-
-      if (moveOrder.countdown <= gf::Time::zero()) {
-        moveOrder.countdown += MoveDelay;
-
-        Regiment* originRegiment = data.getRegiment(moveOrder.origin);
-        assert(originRegiment != nullptr);
-        Regiment* destinationRegiment = data.getRegiment(moveOrder.destination);
-        assert(originRegiment != destinationRegiment);
-
-        if (originRegiment->count <= 0) {
-          continue;
-        }
-
-        if (destinationRegiment != nullptr && originRegiment->ownerID != destinationRegiment->ownerID && destinationRegiment->count > 0) {
-          gf::Log::info("Attack regiment form {%d,%d} to {%d,%d}\n",
-            moveOrder.origin.x, moveOrder.origin.y,
-            moveOrder.destination.x, moveOrder.destination.y);
-
-          // Handle attack
-          Packet packet;
-          packet.type = PacketType::KillUnit;
-
-          // Compute the bonus
-          // Horseman > Swordsman
-          // Swordsman > Lancer
-          // Lancer > Horseman
-          float modifier = EqualAttack;
-          switch (originRegiment->division) {
-            case Division::Horseman:
-              switch (destinationRegiment->division) {
-                case Division::Swordsman:
-                  modifier = BonusAttack;
-                  break;
-                case Division::Lancer:
-                  modifier = MalusAttack;
-                  break;
-                default:
-                  break;
-              }
-              break;
-
-            case Division::Swordsman:
-              switch (destinationRegiment->division) {
-                case Division::Lancer:
-                  modifier = BonusAttack;
-                  break;
-                case Division::Horseman:
-                  modifier = MalusAttack;
-                  break;
-                default:
-                  break;
-              }
-              break;
-
-            case Division::Lancer:
-              switch (destinationRegiment->division) {
-                case Division::Horseman:
-                  modifier = BonusAttack;
-                  break;
-                case Division::Swordsman:
-                  modifier = MalusAttack;
-                  break;
-                default:
-                  break;
-              }
-              break;
-          }
-
-          gf::Log::debug("Modifier attack: %f\n", modifier);
-
-          if (gRandom().computeBernoulli(modifier)) {
-            --destinationRegiment->count;
-            packet.killUnit.position = destinationRegiment->position;
-          } else {
-            --originRegiment->count;
-            packet.killUnit.position = originRegiment->position;
-          }
-
-          pendingPackets.push_back(packet);
-
-          continue;
-        }
-
-        if (data.isValidMove(moveOrder.origin, moveOrder.destination)) {
-          gf::Log::info("Move unit form {%d,%d} to {%d,%d}\n",
-            moveOrder.origin.x, moveOrder.origin.y,
-            moveOrder.destination.x, moveOrder.destination.y);
-          data.moveUnit(moveOrder.origin, moveOrder.destination);
-
-          // Create packet
-          Packet packet;
-          packet.type = PacketType::MoveUnit;
-          packet.moveUnit.origin = moveOrder.origin;
-          packet.moveUnit.destination = moveOrder.destination;
-
-          pendingPackets.push_back(packet);
-        }
-      }
-    }
-
-    // Clear all empty move order
-    moveOrders.erase(std::remove_if(moveOrders.begin(), moveOrders.end(), [this](const MoveOrder &moveOrder){
-      Regiment* regiment = data.getRegiment(moveOrder.origin);
-      assert(regiment != nullptr);
-
-      return regiment->count <= 0 || !data.isValidMove(moveOrder.origin, moveOrder.destination);
-    }), moveOrders.end());
-
-    // Clear all empty regiment
-    data.cleanUpRegiments();
+    // // Handle the movement and attack
+    // for (auto &moveOrder: moveOrders) {
+    //   moveOrder.countdown -= time;
+    //
+    //   if (moveOrder.countdown <= gf::Time::zero()) {
+    //     moveOrder.countdown += MoveDelay;
+    //
+    //     Regiment* originRegiment = data.getRegiment(moveOrder.origin);
+    //     assert(originRegiment != nullptr);
+    //     Regiment* destinationRegiment = data.getRegiment(moveOrder.destination);
+    //     assert(originRegiment != destinationRegiment);
+    //
+    //     if (originRegiment->count <= 0) {
+    //       continue;
+    //     }
+    //
+    //     if (destinationRegiment != nullptr && originRegiment->ownerID != destinationRegiment->ownerID && destinationRegiment->count > 0) {
+    //       gf::Log::info("Attack regiment form {%d,%d} to {%d,%d}\n",
+    //         moveOrder.origin.x, moveOrder.origin.y,
+    //         moveOrder.destination.x, moveOrder.destination.y);
+    //
+    //       // Handle attack
+    //       Packet packet;
+    //       packet.type = PacketType::KillUnit;
+    //
+    //       // Compute the bonus
+    //       // Horseman > Swordsman
+    //       // Swordsman > Lancer
+    //       // Lancer > Horseman
+    //       float modifier = EqualAttack;
+    //       switch (originRegiment->division) {
+    //         case Division::Horseman:
+    //           switch (destinationRegiment->division) {
+    //             case Division::Swordsman:
+    //               modifier = BonusAttack;
+    //               break;
+    //             case Division::Lancer:
+    //               modifier = MalusAttack;
+    //               break;
+    //             default:
+    //               break;
+    //           }
+    //           break;
+    //
+    //         case Division::Swordsman:
+    //           switch (destinationRegiment->division) {
+    //             case Division::Lancer:
+    //               modifier = BonusAttack;
+    //               break;
+    //             case Division::Horseman:
+    //               modifier = MalusAttack;
+    //               break;
+    //             default:
+    //               break;
+    //           }
+    //           break;
+    //
+    //         case Division::Lancer:
+    //           switch (destinationRegiment->division) {
+    //             case Division::Horseman:
+    //               modifier = BonusAttack;
+    //               break;
+    //             case Division::Swordsman:
+    //               modifier = MalusAttack;
+    //               break;
+    //             default:
+    //               break;
+    //           }
+    //           break;
+    //       }
+    //
+    //       gf::Log::debug("Modifier attack: %f\n", modifier);
+    //
+    //       if (gRandom().computeBernoulli(modifier)) {
+    //         --destinationRegiment->count;
+    //         packet.killUnit.position = destinationRegiment->position;
+    //       } else {
+    //         --originRegiment->count;
+    //         packet.killUnit.position = originRegiment->position;
+    //       }
+    //
+    //       pendingPackets.push_back(packet);
+    //
+    //       continue;
+    //     }
+    //
+    //     if (data.isValidMove(moveOrder.origin, moveOrder.destination)) {
+    //       gf::Log::info("Move unit form {%d,%d} to {%d,%d}\n",
+    //         moveOrder.origin.x, moveOrder.origin.y,
+    //         moveOrder.destination.x, moveOrder.destination.y);
+    //       data.moveUnit(moveOrder.origin, moveOrder.destination);
+    //
+    //       // Create packet
+    //       Packet packet;
+    //       packet.type = PacketType::MoveUnit;
+    //       packet.moveUnit.origin = moveOrder.origin;
+    //       packet.moveUnit.destination = moveOrder.destination;
+    //
+    //       pendingPackets.push_back(packet);
+    //     }
+    //   }
+    // }
+    //
+    // // Clear all empty move order
+    // moveOrders.erase(std::remove_if(moveOrders.begin(), moveOrders.end(), [this](const MoveOrder &moveOrder){
+    //   Regiment* regiment = data.getRegiment(moveOrder.origin);
+    //   assert(regiment != nullptr);
+    //
+    //   return regiment->count <= 0 || !data.isValidMove(moveOrder.origin, moveOrder.destination);
+    // }), moveOrders.end());
+    //
+    // // Clear all empty regiment
+    // data.cleanUpRegiments();
   }
 
   void GameState::checkEndCondition(const std::vector<gf::Id> &players) {
-    gf::Id winner = InvalidPlayerID;
-
-    for (auto player: players) {
-      for (auto &regiment: data.regiments) {
-        if (regiment.ownerID == player) {
-          if (winner != InvalidPlayerID) {
-            return;
-          }
-
-          winner = player;
-          break;
-        }
-      }
-    }
-
-    assert(winner != InvalidPlayerID);
-
-    Packet packet;
-    packet.type = PacketType::WinGame;
-    packet.winGame.winner = winner;
-
-    pendingPackets.push_back(packet);
+    // gf::Id winner = InvalidPlayerID;
+    //
+    // for (auto player: players) {
+    //   for (auto &regiment: data.regiments) {
+    //     if (regiment.ownerID == player) {
+    //       if (winner != InvalidPlayerID) {
+    //         return;
+    //       }
+    //
+    //       winner = player;
+    //       break;
+    //     }
+    //   }
+    // }
+    //
+    // assert(winner != InvalidPlayerID);
+    //
+    // Packet packet;
+    // packet.type = PacketType::WinGame;
+    // packet.winGame.winner = winner;
+    //
+    // pendingPackets.push_back(packet);
   }
 }

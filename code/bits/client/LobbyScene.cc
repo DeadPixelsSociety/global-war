@@ -28,6 +28,7 @@ namespace gw {
     while (m_network.receiveLobbyPacket(packet)) {
       switch (packet.type) {
         case PacketLobbyClientType::CreatePlayer:
+        {
           assert(packet.playerID == packet.createPlayer.playerID);
           assert(m_gameState.currentPlayerID == InvalidPlayerID);
 
@@ -42,24 +43,28 @@ namespace gw {
 
           m_network.sendLobbyPacket(packetServer);
           break;
+        }
 
         case PacketLobbyClientType::JoinGame:
+        {
           gf::Log::info("Game ID: %lx\n", packet.joinGame.gameID);
           gf::Log::info("Number players: %d\n", packet.joinGame.nbPlayers);
           for (int i = 0; i < packet.joinGame.nbPlayers; ++i) {
             gf::Log::info("Players[%d] ID = %lx\n", i, packet.joinGame.playersID[i]);
           }
 
-          // // Add playerIDs to the client model
-          // auto it = packet.joinGame.playersID.begin();
-          // m_gameState.allPlayerID.insert(m_gameState.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
-          //
+          // Add playerIDs to the client model
+          auto it = packet.joinGame.playersID.begin();
+          m_gameState.allPlayerID.insert(m_gameState.allPlayerID.begin(), it, it+packet.joinGame.nbPlayers);
+
           // // Send the acknowledge to join session game
-          // Packet packet;
-          // packet.type = PacketType::AckJoinGame;
-          // bool ok = m_gameState.threadCom.sendPacket(packet);
-          // assert(ok);
-          //
+          PacketLobbyServer packetServer;
+          packetServer.type = PacketLobbyServerType::ConfirmJoinGame;
+          packetServer.playerID = m_gameState.currentPlayerID;
+          packetServer.confirmJoinGame.gameID = packet.joinGame.gameID;
+
+          m_network.sendLobbyPacket(packetServer);
+
           // // Disable the scene
           // GameStart gameStart;
           // gMessageManager().sendMessage(&gameStart);
@@ -67,6 +72,7 @@ namespace gw {
           // // pause();
           // // setActive(false);
           break;
+        }
       }
     }
   }

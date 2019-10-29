@@ -44,9 +44,9 @@ namespace gw {
     gf::Id playerID;
   };
 
-  /*struct ConfirmJoinGame {
-    // No data needed
-  };*/
+  struct ConfirmJoinGame {
+    gf::Id gameID;
+  };
 
   // Game Server
   struct MoveRegiment {
@@ -98,7 +98,7 @@ namespace gw {
 
     union {
       RequestMatch requestMatch;
-      // ConfirmJoinGame confirmJoinGame;
+      ConfirmJoinGame confirmJoinGame;
     };
   };
 
@@ -147,7 +147,7 @@ namespace gw {
         break;
 
       case PacketLobbyServerType::ConfirmJoinGame:
-        // No data structure
+        ar | packet.confirmJoinGame.gameID;
         break;
     }
 

@@ -6,24 +6,25 @@
 #include <gf/Log.h>
 #include <gf/Queue.h>
 
-#include "../common/Packet.h"
-
 #include "GameState.h"
-#include "Player.h"
+#include "NetworkManagerServer.h"
 
 namespace gw {
   class GameSession {
   public:
-    GameSession(gf::Id gameID, std::map<gf::Id, Player> &players);
+    GameSession(NetworkManagerServer& network, gf::Id gameID, std::vector<gf::Id> players);
 
-    void launchGame();
+    void ackPlayer();
 
-    void sendAtPlayers(Packet &packet);
+    // void launchGame();
+    //
+    // void sendAtPlayers(Packet &packet);
 
   private:
+    NetworkManagerServer& m_network;
     gf::Id m_gameID;
-    gf::Queue<Packet> m_queue;
-    std::vector<Player*> m_players;
+    std::vector<gf::Id> m_players;
+    int m_waitingAck;
     GameState m_gameState;
   };
 }

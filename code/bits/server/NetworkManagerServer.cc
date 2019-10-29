@@ -102,6 +102,10 @@ namespace gw {
     return m_lobbyQueue.poll(packet);
   }
 
+  void NetworkManagerServer::sendLobbyPacket(PacketLobbyClient &packet) {
+    sendLobbyPacket(packet.playerID, packet);
+  }
+
   void NetworkManagerServer::sendLobbyPacket(gf::Id playerID, PacketLobbyClient &packet) {
     // Get the client socket, throw an exception if client not exists
     auto &clientSocket = m_lobbyClients.at(playerID);

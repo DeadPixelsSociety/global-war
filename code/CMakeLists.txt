@@ -48,8 +48,8 @@ install(
 
 add_executable(global-war-server
   global-war-server.cc
-  # bits/server/GameSession.cc
-  # bits/server/GameState.cc
+  bits/server/GameSession.cc
+  bits/server/GameState.cc
   bits/server/Lobby.cc
   bits/server/NetworkManagerServer.cc
   # bits/server/Player.cc
