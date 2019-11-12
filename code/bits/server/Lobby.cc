@@ -31,6 +31,8 @@ namespace gw {
           break;
         case PacketLobbyServerType::ConfirmJoinGame:
           auto &gameEntry = m_games.at(packet.confirmJoinGame.gameID);
+          m_lobbyPlayers.at(packet.playerID) = PlayerState::Playing;
+
           gameEntry.ackPlayer();
           break;
       }
@@ -102,7 +104,7 @@ namespace gw {
       m_pendingPackets.push(packet);
     }
 
-    // // Create new Session game
+    // Create new Session game
     bool inserted;
     decltype(m_games)::iterator it;
 

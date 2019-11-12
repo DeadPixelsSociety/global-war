@@ -39,6 +39,11 @@ int main(int argc, char *argv[]) {
   }
 
   #endif // 0
+  if (argc != 3) {
+    std::cerr << "Usage: global-war-server <port_lobby> <port_game>\n";
+    return 1;
+  }
+
   // Init singleton
   gf::SingletonStorage<gf::Random> storageForRandom(gw::gRandom);
 
@@ -49,7 +54,7 @@ int main(int argc, char *argv[]) {
 
   gw::NetworkManagerServer networkManager(argv[1], argv[2]);
 
-  // Wait for new connexions
+  // Wait for new connexions in the lobby
   std::thread([&networkManager]() {
     for (;;) {
       networkManager.waitConnection();

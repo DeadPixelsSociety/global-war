@@ -1,2 +1,3 @@
 - [X] When the server start a game session, two threads launched and ran to 100% CPU instead only one thread at 100%
 - [ ] A malicious client could usurp another playerID  
+- [ ] Create a template for sendPacket and receivePacket (NetworkManagerClient and NetworkManagerServer?)

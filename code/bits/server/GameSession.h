@@ -21,6 +21,9 @@ namespace gw {
     // void sendAtPlayers(Packet &packet);
 
   private:
+    void initializeGame();
+
+  private:
     NetworkManagerServer& m_network;
     gf::Id m_gameID;
     std::vector<gf::Id> m_players;

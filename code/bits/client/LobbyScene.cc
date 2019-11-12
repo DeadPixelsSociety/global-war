@@ -7,10 +7,9 @@
 #include "Singletons.h"
 
 namespace gw {
-  LobbyScene::LobbyScene(const gf::Vector2i &initializeSize, GameState &gameState, NetworkManagerClient &network)
+  LobbyScene::LobbyScene(const gf::Vector2i &initializeSize, GameState &gameState)
   : Scene(initializeSize)
   , m_gameState(gameState)
-  , m_network(network)
   , m_waitScreen(gResourceManager().getFont("DejaVuSans.ttf")) {
     addHudEntity(m_waitScreen);
 
@@ -25,7 +24,7 @@ namespace gw {
 
   void LobbyScene::processPackets() {
     PacketLobbyClient packet;
-    while (m_network.receiveLobbyPacket(packet)) {
+    while (gNetwork().receiveLobbyPacket(packet)) {
       switch (packet.type) {
         case PacketLobbyClientType::CreatePlayer:
         {
@@ -41,7 +40,7 @@ namespace gw {
           packetServer.playerID = m_gameState.currentPlayerID;
           packetServer.requestMatch.playerID = m_gameState.currentPlayerID;
 
-          m_network.sendLobbyPacket(packetServer);
+          gNetwork().sendLobbyPacket(packetServer);
           break;
         }
 
@@ -63,14 +62,14 @@ namespace gw {
           packetServer.playerID = m_gameState.currentPlayerID;
           packetServer.confirmJoinGame.gameID = packet.joinGame.gameID;
 
-          m_network.sendLobbyPacket(packetServer);
+          gNetwork().sendLobbyPacket(packetServer);
 
-          // // Disable the scene
-          // GameStart gameStart;
-          // gMessageManager().sendMessage(&gameStart);
-          // // hide();
-          // // pause();
-          // // setActive(false);
+          // Disable the scene
+          GameStart gameStart;
+          gMessageManager().sendMessage(&gameStart);
+          // hide();
+          // pause();
+          // setActive(false);
           break;
         }
       }

@@ -22,6 +22,8 @@ namespace gw {
     void sendLobbyPacket(PacketLobbyClient &packet);
     void sendLobbyPacket(gf::Id playerID, PacketLobbyClient &packet);
 
+    void sendGamePacket(gf::Id playerID, PacketGameClient &packet);
+
   private:
     ListenerTcp m_lobbyListener;
     ListenerTcp m_gameListener;

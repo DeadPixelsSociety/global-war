@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "HUD.h"
 #include "MapRender.h"
+#include "NetworkManagerClient.h"
 #include "RegimentRender.h"
 
 namespace gw {

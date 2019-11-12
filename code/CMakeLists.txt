@@ -7,14 +7,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 
 add_executable(global-war
   global-war.cc
-  # bits/client/ArmySelection.cc
-  # bits/client/GameScene.cc
+  bits/client/ArmySelection.cc
+  bits/client/GameScene.cc
   bits/client/GameState.cc
-  # bits/client/HUD.cc
+  bits/client/HUD.cc
   bits/client/LobbyScene.cc
-  # bits/client/MapRender.cc
+  bits/client/MapRender.cc
   bits/client/NetworkManagerClient.cc
-  # bits/client/RegimentRender.cc
+  bits/client/RegimentRender.cc
   bits/client/Singletons.cc
   bits/client/Stage.cc
   bits/client/WaitScreen.cc

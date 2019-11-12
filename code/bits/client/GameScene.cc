@@ -38,19 +38,10 @@ namespace gw {
   }
 
   void GameScene::processPackets() {
-    Packet packet;
-    while (m_gameState.comQueue.poll(packet)) {
+    PacketGameClient packet;
+    while (gNetwork().receiveGamePacket(packet)) {
       switch (packet.type) {
-        case PacketType::NewPlayer:
-        case PacketType::QuickMatch:
-        case PacketType::MoveRegiment:
-        case PacketType::JoinGame:
-        case PacketType::AckJoinGame:
-          gf::Log::error("Receive unexpected packet in game Scene\n");
-          assert(false);
-          break;
-
-        case PacketType::CreateRegiment:
+        case PacketGameClientType::CreateRegiment:
           gf::Log::info("Regiment created: {count: %d, pos: %d,%d, owner: %lx}\n",
             packet.createRegiment.count, packet.createRegiment.position.x,
             packet.createRegiment.position.y, packet.createRegiment.ownerID);
@@ -58,7 +49,7 @@ namespace gw {
           m_gameState.data.regiments.push_back({packet.createRegiment.ownerID, packet.createRegiment.count, packet.createRegiment.position, packet.createRegiment.division});
           break;
 
-        case PacketType::MoveUnit:
+        case PacketGameClientType::MoveUnit:
           gf::Log::info("Move unit from {%d,%d} to {%d,%d}\n",
             packet.moveUnit.origin.x, packet.moveUnit.origin.y,
             packet.moveUnit.destination.x, packet.moveUnit.destination.y);
@@ -66,7 +57,7 @@ namespace gw {
           m_gameState.data.moveUnit(packet.moveUnit.origin, packet.moveUnit.destination);
           break;
 
-        case PacketType::KillUnit:
+        case PacketGameClientType::KillUnit:
           gf::Log::info("Kill unit at {%d,%d}\n",
             packet.killUnit.position.x, packet.killUnit.position.y);
 
@@ -74,7 +65,7 @@ namespace gw {
 
           break;
 
-        case PacketType::InitializePlayer:
+        case PacketGameClientType::InitializePlayer:
           assert(packet.initializePlayer.playerID == m_gameState.currentPlayerID);
 
           gf::Log::info("Inital data: {playerID: %lx, pos: %d,%d}\n", packet.initializePlayer.playerID, packet.initializePlayer.position.x, packet.initializePlayer.position.y);
@@ -82,8 +73,8 @@ namespace gw {
 
           break;
 
-        case PacketType::WinGame:
-          gf::Log::info("Winner playerID: %lx\n", packet.winGame.winner);
+        case PacketGameClientType::DeclareWinner:
+          gf::Log::info("Winner playerID: %lx\n", packet.declareWinner.winner);
 
           break;
       }

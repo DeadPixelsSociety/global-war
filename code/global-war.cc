@@ -8,7 +8,7 @@
 
 #include <gf/Log.h>
 
-// #include "bits/client/ClientMessages.h"
+#include "bits/client/ClientMessages.h"
 #include "bits/client/GameScene.h"
 // #include "bits/client/GameState.h"
 #include "bits/client/LobbyScene.h"
@@ -66,8 +66,16 @@ int main(int argc, char *argv[]) {
   }
 
   #endif // 0
+  if (argc != 4) {
+    std::cerr << "Usage: global-war <host> <port_lobby> <port_game>\n";
+    return 1;
+  }
 
-  gw::NetworkManagerClient network(argv[1], argv[2], nullptr);
+  // Network manager
+  gf::SingletonStorage<gw::NetworkManagerClient> storageForNetwork(gw::gNetwork, argv[1], argv[2], argv[3]);
+
+  // Message manager
+  gf::SingletonStorage<gf::MessageManager> storageForMessageManager(gw::gMessageManager);
 
   // Create the scene manager and the opengl context
   gf::SceneManager sceneManager("Global War", gw::InitialScreenSize);
@@ -76,23 +84,24 @@ int main(int argc, char *argv[]) {
   gf::SingletonStorage<gf::ResourceManager> storageForResourceManager(gw::gResourceManager);
   gw::gResourceManager().addSearchDir(GLOBAL_WAR_DATA_DIR);
 
+
   // Define the model
   gw::GameState gameState;
 
   // Create scenes
-  gw::LobbyScene lobbyScene(gw::InitialScreenSize, gameState, network);
+  gw::LobbyScene lobbyScene(gw::InitialScreenSize, gameState);
   sceneManager.pushScene(lobbyScene);
 
-  // gw::GameScene gameScene(gw::InitialScreenSize, gameState, sceneManager.getRenderer());
+  gw::GameScene gameScene(gw::InitialScreenSize, gameState, sceneManager.getRenderer());
 
-  // gw::gMessageManager().registerHandler<gw::GameStart>([&](gf::Id id, gf::Message *msg) {
-  //   assert(id == gw::GameStart::type);
-  //   gf::unused(msg);
-  //
-  //   sceneManager.replaceScene(gameScene);
-  //
-  //   return gf::MessageStatus::Keep;
-  // });
+  gw::gMessageManager().registerHandler<gw::GameStart>([&](gf::Id id, gf::Message *msg) {
+    assert(id == gw::GameStart::type);
+    gf::unused(msg);
+
+    sceneManager.replaceScene(gameScene);
+
+    return gf::MessageStatus::Keep;
+  });
 
   // Launch the scenes
   sceneManager.run();

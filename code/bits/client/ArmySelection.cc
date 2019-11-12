@@ -7,6 +7,8 @@
 #include "../common/Hexagon.h"
 #include "../common/MapData.h"
 
+#include "Singletons.h"
+
 namespace gw {
 
   namespace {
@@ -54,13 +56,13 @@ namespace gw {
             m_state = State::WaitingRegiment;
 
             // Send move to server
-            Packet packet;
-            packet.type = PacketType::MoveRegiment;
+            PacketGameServer packet;
+            packet.type = PacketGameServerType::MoveRegiment;
             packet.moveRegiment.playerID = m_gameState.currentPlayerID;
             packet.moveRegiment.regimentOrigin = m_source;
             packet.moveRegiment.regimentDestination = m_destination;
 
-            if (!m_gameState.threadCom.sendPacket(packet)) {
+            if (!gNetwork().sendGamePacket(packet)) {
               std::abort();
             }
           }

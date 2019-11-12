@@ -22,62 +22,7 @@ namespace gw {
   , m_gameID(gameID)
   , m_players(players)
   , m_waitingAck(m_players.size()) {
-    // // Sort player by ID
-    // std::sort(m_players.begin(), m_players.end(), [](Player *rhs, Player *lhs){
-    //   return rhs->getID() < lhs->getID();
-    // });
-
     gf::Log::info("New game session (#%lx) created with %lx players\n", m_gameID, m_players.size());
-
-    // Wait the acknowledge of all players -> to lobby
-    // for (std::size_t i = 0; i < m_players.size(); ++i) {
-    //   Packet packet;
-    //   m_queue.wait(packet);
-    //
-    //   assert(packet.type == PacketType::AckJoinGame);
-    // }
-
-    // // Create the player's regiments -> to other method
-    // auto createUnit = [&](Player &player, gf::Vector2i position, Division division) {
-    //   // Add the new regiment to the model
-    //   Regiment regiment;
-    //   regiment.ownerID = player.getID();
-    //   regiment.position = position;
-    //   regiment.count = IntialRegimentSize;
-    //   regiment.division = division;
-    //   m_gameState.data.regiments.push_back(regiment);
-    //
-    //   // TODO: Remove this packet to move this an the first init of GameModel
-    //   packet.type = PacketType::CreateRegiment;
-    //   packet.createRegiment.count = regiment.count;
-    //   packet.createRegiment.position = regiment.position;
-    //   packet.createRegiment.ownerID = regiment.ownerID;
-    //   packet.createRegiment.division = regiment.division;
-    //
-    //   // Send this regiment at all players
-    //   for (auto p: m_players) {
-    //     p->sendPacket(packet);
-    //   }
-    // };
-    //
-    // // Choose the initial location for players
-    // auto initialPositions = m_gameState.data.map.generateInitialPositions(gRandom(), m_players.size());
-    //
-    // for (std::size_t i = 0; i < m_players.size(); ++i) {
-    //   auto neighborsPositions = m_gameState.data.map.getEmptyNeighborPositions(initialPositions[i]);
-    //   assert(neighborsPositions.size() >= 3);
-    //
-    //   createUnit(*m_players[i], neighborsPositions[0], Division::Lancer);
-    //   createUnit(*m_players[i], neighborsPositions[1], Division::Swordsman);
-    //   createUnit(*m_players[i], neighborsPositions[2], Division::Horseman);
-    //
-    //   packet.type = PacketType::InitializePlayer;
-    //   packet.initializePlayer.playerID = m_players[i]->getID();
-    //   packet.initializePlayer.position = initialPositions[i];
-    //
-    //   m_players[i]->sendPacket(packet);
-    // }
-
   }
 
   void GameSession::ackPlayer() {
@@ -85,6 +30,56 @@ namespace gw {
 
     if (m_waitingAck == 0) {
       gf::Log::debug("Launch game\n");
+      initializeGame();
+    }
+  }
+
+
+  void GameSession::initializeGame() {
+    // Create the player's regiments -> to other method
+    auto createUnit = [&](gf::Id &playerID, gf::Vector2i position, Division division) {
+      PacketGameClient packet;
+
+      // Add the new regiment to the model
+      Regiment regiment;
+      regiment.ownerID = playerID;
+      regiment.position = position;
+      regiment.count = IntialRegimentSize;
+      regiment.division = division;
+      m_gameState.data.regiments.push_back(regiment);
+
+      // TODO: Remove this packet to move this an the first init of GameModel
+      packet.type = PacketGameClientType::CreateRegiment;
+      packet.playerID = playerID;
+      packet.createRegiment.count = regiment.count;
+      packet.createRegiment.position = regiment.position;
+      packet.createRegiment.ownerID = regiment.ownerID;
+      packet.createRegiment.division = regiment.division;
+
+      // Send this regiment at all players
+      for (auto p: m_players) {
+        m_network.sendGamePacket(p, packet);
+      }
+    };
+
+    // Choose the initial location for players
+    auto initialPositions = m_gameState.data.map.generateInitialPositions(gRandom(), m_players.size());
+
+    for (std::size_t i = 0; i < m_players.size(); ++i) {
+      auto neighborsPositions = m_gameState.data.map.getEmptyNeighborPositions(initialPositions[i]);
+      assert(neighborsPositions.size() >= 3);
+
+      createUnit(m_players[i], neighborsPositions[0], Division::Lancer);
+      createUnit(m_players[i], neighborsPositions[1], Division::Swordsman);
+      createUnit(m_players[i], neighborsPositions[2], Division::Horseman);
+
+      PacketGameClient packet;
+      packet.type = PacketGameClientType::InitializePlayer;
+      packet.playerID = m_players[i];
+      packet.initializePlayer.playerID = m_players[i];
+      packet.initializePlayer.position = initialPositions[i];
+
+      m_network.sendGamePacket(m_players[i], packet);
     }
   }
 

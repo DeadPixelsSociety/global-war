@@ -10,7 +10,7 @@
 namespace gw {
   class LobbyScene: public gf::Scene {
   public:
-    LobbyScene(const gf::Vector2i &initializeSize, GameState &gameState, NetworkManagerClient &network);
+    LobbyScene(const gf::Vector2i &initializeSize, GameState &gameState);
 
   private:
     void doUpdate(gf::Time time) override;
@@ -19,7 +19,6 @@ namespace gw {
 
   private:
     GameState& m_gameState;
-    NetworkManagerClient& m_network;
     WaitScreen m_waitScreen;
   };
 }

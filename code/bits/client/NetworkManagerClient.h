@@ -10,14 +10,18 @@ namespace gw {
   public:
     NetworkManagerClient(const char* hostname, const char* portLobby, const char* portGame);
 
-    bool receiveLobbyPacket(PacketLobbyClient &packet);
     bool sendLobbyPacket(PacketLobbyServer &packet);
+    bool receiveLobbyPacket(PacketLobbyClient &packet);
+
+    bool sendGamePacket(PacketGameServer &packet);
+    bool receiveGamePacket(PacketGameClient &packet);
 
   private:
     SocketTcp m_lobbySocket;
-    // SocketTcp m_gameSocket;
+    SocketTcp m_gameSocket;
 
     gf::Queue<PacketLobbyClient> m_lobbyQueue;
+    gf::Queue<PacketGameClient> m_gameQueue;
   };
 }
 
