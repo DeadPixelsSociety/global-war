@@ -1,7 +1,7 @@
 #ifndef BITS_SERVER_NETWORK_MANAGER_H
 #define BITS_SERVER_NETWORK_MANAGER_H
 
-#include <condition_variable>
+#include <deque>
 #include <mutex>
 
 #include <gf/Queue.h>
@@ -21,6 +21,8 @@ namespace gw {
 
     void sendLobbyPacket(PacketLobbyClient &packet);
     void sendLobbyPacket(gf::Id playerID, PacketLobbyClient &packet);
+
+    std::deque<PacketGameServer> receiveGamePackets(const std::vector<gf::Id> &players);
 
     void sendGamePacket(gf::Id playerID, PacketGameClient &packet);
 

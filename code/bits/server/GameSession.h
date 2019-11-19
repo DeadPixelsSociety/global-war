@@ -8,6 +8,7 @@
 
 #include "GameState.h"
 #include "NetworkManagerServer.h"
+#include "Singletons.h"
 
 namespace gw {
   class GameSession {
@@ -16,8 +17,8 @@ namespace gw {
 
     void ackPlayer();
 
-    // void launchGame();
-    //
+    void launchGame();
+
     // void sendAtPlayers(Packet &packet);
 
   private:

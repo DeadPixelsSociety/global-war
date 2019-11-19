@@ -7,8 +7,6 @@
 #include <gf/Sleep.h>
 #include <gf/Vector.h>
 
-#include "Singletons.h"
-
 namespace gw {
   namespace {
 
@@ -81,76 +79,73 @@ namespace gw {
 
       m_network.sendGamePacket(m_players[i], packet);
     }
+
+    // Start the game
+    launchGame();
   }
 
-  // void GameSession::launchGame() {
-  //   std::thread([this](){
-  //     // Create the player ID list
-  //     std::vector<gf::Id> playerIDs;
-  //
-  //     for (auto *player: m_players) {
-  //       playerIDs.push_back(player->getID());
-  //     }
-  //
-  //     gf::Clock clock;
-  //
-  //     for(;;) {
-  //       // Process pending packet
-  //       Packet packet;
-  //       while (m_queue.poll(packet)) {
-  //         switch (packet.type) {
-  //         case PacketType::MoveRegiment:
-  //         {
-  //           if (!m_gameState.data.isValidMove(packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination)) {
-  //             break;
-  //           }
-  //
-  //           // If the order already exists
-  //           if (std::find_if(m_gameState.moveOrders.begin(), m_gameState.moveOrders.end(), [packet](const MoveOrder& order){
-  //             return packet.moveRegiment.regimentOrigin == order.origin && packet.moveRegiment.regimentDestination == order.destination;
-  //           }) != m_gameState.moveOrders.end()) {
-  //             break;
-  //           }
-  //
-  //           // Create a move order
-  //           m_gameState.moveOrders.push_back({ packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination, gf::Time::zero() });
-  //           break;
-  //         }
-  //
-  //         case PacketType::NewPlayer:
-  //         case PacketType::QuickMatch:
-  //         case PacketType::JoinGame:
-  //         case PacketType::AckJoinGame:
-  //         case PacketType::CreateRegiment:
-  //         case PacketType::MoveUnit:
-  //         case PacketType::KillUnit:
-  //         case PacketType::InitializePlayer:
-  //         case PacketType::WinGame:
-  //           assert(false);
-  //           break;
-  //         }
-  //       }
-  //
-  //       // Update model
-  //       gf::Time time = clock.restart();
-  //       m_gameState.update(time);
-  //
-  //       // Check the end condition
-  //       m_gameState.checkEndCondition(playerIDs);
-  //
-  //       // Send all packets
-  //       for (auto &packet: m_gameState.pendingPackets) {
-  //         sendAtPlayers(packet);
-  //       }
-  //       m_gameState.pendingPackets.clear();
-  //
-  //       if (time < TickTime) {
-  //         gf::sleep(TickTime - time);
-  //       }
-  //
-  //     }
-  //   }).detach();
-  // }
+  void GameSession::launchGame() {
+    std::thread([this](){
+      // // Create the player ID list
+      // std::vector<gf::Id> playerIDs;
+      //
+      // for (auto *player: m_players) {
+      //   playerIDs.push_back(player->getID());
+      // }
+
+      gf::Clock clock;
+
+      for(;;) {
+        // Process pending packet
+        auto packets = m_network.receiveGamePackets(m_players);
+
+        while (packets.size() != 0) {
+          PacketGameServer packet = packets.front();
+          packets.pop_front();
+
+          switch (packet.type) {
+          case PacketGameServerType::MoveRegiment:
+          {
+            if (!m_gameState.data.isValidMove(packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination)) {
+              break;
+            }
+
+            // If the order already exists
+            if (std::find_if(m_gameState.moveOrders.begin(), m_gameState.moveOrders.end(), [packet](const MoveOrder& order){
+              return packet.moveRegiment.regimentOrigin == order.origin && packet.moveRegiment.regimentDestination == order.destination;
+            }) != m_gameState.moveOrders.end()) {
+              break;
+            }
+
+            // Create a move order
+            m_gameState.moveOrders.push_back({ packet.moveRegiment.regimentOrigin, packet.moveRegiment.regimentDestination, gf::Time::zero() });
+            break;
+          }
+          }
+        }
+
+        // Update model
+        gf::Time time = clock.restart();
+        m_gameState.update(time);
+
+        // Check the end condition
+        m_gameState.checkEndCondition(m_players);
+
+        // Send all packets
+        for (auto &packet: m_gameState.pendingPackets) {
+          for (auto playerID: m_players) {
+            m_network.sendGamePacket(playerID, packet);
+          }
+        }
+        m_gameState.pendingPackets.clear();
+
+        if (time < TickTime) {
+          gf::sleep(TickTime - time);
+        }
+
+      }
+    }).detach();
+  }
   //
   // void GameSession::sendAtPlayers(Packet &packet) {
   //   for (Player *p: m_players) {

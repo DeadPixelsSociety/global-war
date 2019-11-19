@@ -6,6 +6,7 @@
 #include <gf/Model.h>
 
 #include "../common/Data.h"
+#include "../common/Packets.h"
 
 namespace gw {
   struct MoveOrder {
@@ -23,7 +24,7 @@ namespace gw {
     Data data;
     std::vector<MoveOrder> moveOrders;
 
-    // std::deque<Packet> pendingPackets;
+    std::deque<PacketGameClient> pendingPackets;
   };
 
 }

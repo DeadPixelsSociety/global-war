@@ -121,6 +121,28 @@ namespace gw {
     clientSocket.send(packet);
   }
 
+  std::deque<PacketGameServer> NetworkManagerServer::receiveGamePackets(const std::vector<gf::Id> &players) {
+    std::deque<PacketGameServer> packets;
+
+    // For all player
+    for (auto player: players) {
+      auto &gameQueue = m_gameQueues.at(player);
+
+      PacketGameServer packet;
+
+      // Retreive all packets
+      while (gameQueue.poll(packet)) {
+        packets.push_back(packet);
+      }
+    }
+
+    return packets;
+  }
+
+  // void NetworkManagerServer::sendLobbyPacket(PacketLobbyClient &packet) {
+  //   sendLobbyPacket(packet.playerID, packet);
+  // }
+
   void NetworkManagerServer::sendGamePacket(gf::Id playerID, PacketGameClient &packet) {
     // Get the client socket, throw an exception if client not exists
     auto &clientSocket = m_gameClients.at(playerID);
