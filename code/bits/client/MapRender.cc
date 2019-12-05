@@ -28,10 +28,10 @@ namespace gw {
 
       switch (type) {
         case MapData::TileType::Sea:
-          sprite.setTextureRect(gf::RectF({ 0.125f, 0.0f }, { 0.125f, 0.125f }));
+          sprite.setTextureRect(gf::RectF::fromPositionSize({ 0.125f, 0.0f }, { 0.125f, 0.125f }));
           break;
         case MapData::TileType::Land:
-          sprite.setTextureRect(gf::RectF({ 0.0f, 0.0f }, { 0.125f, 0.125f }));
+          sprite.setTextureRect(gf::RectF::fromPositionSize({ 0.0f, 0.0f }, { 0.125f, 0.125f }));
           break;
         default:
           assert(false);
